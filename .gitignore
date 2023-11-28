@@ -1,0 +1,15 @@
+.vs
+Build
+Binaries
+Config
+Content/*
+!Content/Main
+Content/Main/Mesh
+Content/Main/Sounds
+DerivedDataCache
+Intermediate
+Platforms
+Saved
+.vsconfig
+BigJam01.sln
+BigJam01.uproject
