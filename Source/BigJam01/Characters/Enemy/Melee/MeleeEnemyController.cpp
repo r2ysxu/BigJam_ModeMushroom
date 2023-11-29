@@ -58,7 +58,9 @@ void AMeleeEnemyController::PawnDetected(const TArray<AActor*>& DetectedPawns) {
 }
 
 void AMeleeEnemyController::Routine() {
-	if (IsValid(Target)) {
+	if (Owner->GetIsAttacking()) {
+		StopMovement();
+	} else if (IsValid(Target)) {
 		MoveToActor(Target);
 	}
 }

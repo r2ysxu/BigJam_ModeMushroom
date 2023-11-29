@@ -4,6 +4,7 @@
 #include "MainAnimInstance.h"
 #include "../Main/MainCharacter.h"
 #include "../ActorComponents/ComboComponent.h"
+#include "BasicAnimInstance.h"
 
 #include "Animation/AnimInstance.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -14,19 +15,14 @@ void UMainAnimInstance::NativeInitializeAnimation() {
 }
 
 void UMainAnimInstance::NativeUpdateAnimation(float DeltaSeconds) {
-	if (IsValid(Owner)) {
-		Velocity = Owner->GetMovementComponent()->Velocity;
-		IsFalling = Owner->GetMovementComponent()->IsFalling();
-		GroundSpeed = static_cast<float>(Velocity.Length());
+	Super::NativeUpdateAnimation(DeltaSeconds);
+	if (IsValid(GetOwner())) {
 		IsDodging = Owner->GetIsDodging();
 	}
 }
 
-bool UMainAnimInstance::GetShouldMove() {
-	if (IsValid(Owner)) {
-		return Owner->GetMovementComponent()->IsMovingOnGround() && Owner->GetCharacterMovement()->GetCurrentAcceleration().Length() > 0;
-	}
-	return false;
+ACharacter* UMainAnimInstance::GetOwner() {
+	return Owner;
 }
 
 void UMainAnimInstance::NextAttackComboWindow() {

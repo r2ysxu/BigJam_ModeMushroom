@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include "BasicAnimInstance.h"
+
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
 #include "MainAnimInstance.generated.h"
@@ -10,7 +12,7 @@
  * 
  */
 UCLASS()
-class BIGJAM01_API UMainAnimInstance : public UAnimInstance {
+class BIGJAM01_API UMainAnimInstance : public UBasicAnimInstance {
 	GENERATED_BODY()
 
 private:
@@ -18,20 +20,12 @@ private:
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement)
-	FVector Velocity;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement)
-	float GroundSpeed;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement)
-	bool IsFalling;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement)
 	bool IsDodging;
 	
 	virtual void NativeInitializeAnimation() override;
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 
-	UFUNCTION(BlueprintCallable) FORCEINLINE FVector GetVelocity() { return Velocity; }
-	UFUNCTION(BlueprintCallable) FORCEINLINE float GetGroundSpeed() { return GroundSpeed; }
-	UFUNCTION(BlueprintCallable) bool GetShouldMove();
+	virtual class ACharacter* GetOwner() override;
 	UFUNCTION(BlueprintCallable) void NextAttackComboWindow();
 	UFUNCTION(BlueprintCallable) void ResetCombo();
 	UFUNCTION(BlueprintCallable) void DodgeWindowOpen();
