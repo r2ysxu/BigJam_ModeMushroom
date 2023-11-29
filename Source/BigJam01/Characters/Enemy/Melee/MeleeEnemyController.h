@@ -28,8 +28,6 @@ public:
 	AMeleeEnemyController();
 	virtual void OnPossess(APawn* InPawn) override;
 
-
-
 	UFUNCTION() void PawnDetected(const TArray<AActor*>& DetectedPawns);
 
 	void Routine();

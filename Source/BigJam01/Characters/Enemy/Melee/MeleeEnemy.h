@@ -29,6 +29,8 @@ class BIGJAM01_API AMeleeEnemy : public ACharacter {
 private:
 	const float ATTACK_DELAY = 2.f;
 	const float INITIAL_ATTACK_DELAY = 1.f;
+	const FName WeaponSocketL = FName("hand_l");
+	const FName WeaponSocketR = FName("hand_r");
 
 	FTimerHandle InitiateAttackHandler;
 	FTimerHandle SingleAttackHandler;
@@ -36,7 +38,9 @@ private:
 	uint8 SelectedChain = 0;
 	uint8 AttackIndex = 0;
 
-	float SingleAttack(class UAnimMontage* AttackMontage);
+	volatile bool bAttackSwing = false;
+
+	void SingleAttack(EMeleeAttackType AttackType);
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Attack")
@@ -48,8 +52,11 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack")
 	TArray<FAttackChain> AttackChains;
 
+	class UBoxComponent* MeleeWeaponBox;
+
 	UFUNCTION() void OnWithinMeleeRange(UPrimitiveComponent* OverlappedComponent, AActor* actor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	UFUNCTION() void OnOutsideMeleeRange(UPrimitiveComponent* OverlappedComponent, AActor* actor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex);
+	UFUNCTION() void OnWeaponMeleeHit(UPrimitiveComponent* OverlappedComponent, AActor* actor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	virtual void BeginPlay() override;
 	void InitiateMeleeAttack();
 	void PerformAttack();

@@ -59,6 +59,16 @@ void AMainCharacter::SetDodgeWindow(bool IsOpen) {
 	bRollWindowOpen = IsOpen;
 }
 
+void AMainCharacter::InitiateAttack(class UAnimMontage* AnimMontage, EAttackType AttackType) {
+	if (CanMoveAndAttack()) {
+		ComboComponet->InitiateAttack(AnimMontage, AttackType);
+	}
+}
+
+bool AMainCharacter::CanMoveAndAttack() {
+	return !GetIsDodging() && !bFlinching;
+}
+
 void AMainCharacter::OnDodgeRoll() {
 	if (bRolling) {
 		FVector rollVelocity = GetActorForwardVector() * ROLL_VELOCITY;
@@ -73,20 +83,32 @@ void AMainCharacter::OnDodgeRollStop() {
 	GetMovementComponent()->Velocity = FVector();
 }
 
+void AMainCharacter::OnFlinchStop() {
+	bFlinching = false;
+}
+
+void AMainCharacter::OnHitByEnemy() {
+	if (FlinchMontage) {
+		GetMovementComponent()->StopActiveMovement();
+		float animationDelay = PlayAnimMontage(FlinchMontage);
+		GetWorld()->GetTimerManager().SetTimer(OnFlinchHandler, this, &AMainCharacter::OnFlinchStop, animationDelay, false);
+	}
+}
+
 void AMainCharacter::AttackL() {
-	ComboComponet->InitiateAttack(AttackLMontage, EAttackType::VE_L);
+	InitiateAttack(AttackLMontage, EAttackType::VE_L);
 }
 
 void AMainCharacter::AttackR() {
-	ComboComponet->InitiateAttack(AttackRMontage, EAttackType::VE_R);
+	InitiateAttack(AttackRMontage, EAttackType::VE_R);
 }
 
 void AMainCharacter::AttackQ() {
-	ComboComponet->InitiateAttack(AttackQMontage, EAttackType::VE_Q);
+	InitiateAttack(AttackQMontage, EAttackType::VE_Q);
 }
 
 void AMainCharacter::AttackE() {
-	ComboComponet->InitiateAttack(AttackEMontage, EAttackType::VE_E);
+	InitiateAttack(AttackEMontage, EAttackType::VE_E);
 }
 
 void AMainCharacter::DodgeRoll() {

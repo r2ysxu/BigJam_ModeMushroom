@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include "../ActorComponents/ComboComponent.h"
+
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Logging/LogMacros.h"
@@ -24,13 +26,16 @@ private:
 
 	FTimerHandle OnDodgeHandler;
 	FTimerHandle OnDodgeStopHandler;
+	FTimerHandle OnFlinchHandler;
 
 	class UComboComponent* ComboComponet;
 
+	void InitiateAttack(class UAnimMontage* AnimMontage, EAttackType AttackType);
 
 protected:
 	volatile bool bRollWindowOpen = true;
 	volatile bool bRolling = false;
+	volatile bool bFlinching = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
 	class UAnimMontage* AttackLMontage;
@@ -42,9 +47,14 @@ protected:
 	class UAnimMontage* AttackQMontage;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
 	class UAnimMontage* DodgeMontage;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
+	class UAnimMontage* FlinchMontage;
+	
+	bool CanMoveAndAttack();
 
 	void OnDodgeRoll();
 	void OnDodgeRollStop();
+	void OnFlinchStop();
 
 	virtual void AttackL();
 	virtual void AttackR();
@@ -63,7 +73,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	void SetDodgeWindow(bool IsOpen);
+	UFUNCTION(BlueprintCallable) void OnHitByEnemy();
 	FORCEINLINE bool GetIsDodging() { return bRolling; }
 	UFUNCTION(BlueprintCallable) class UComboComponent* GetComboComponent();
 };
-
