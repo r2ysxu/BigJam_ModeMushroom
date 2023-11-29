@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include "../BaseEnemy.h"
+
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "MeleeEnemy.generated.h"
@@ -23,7 +25,7 @@ struct FAttackChain {
 };
 
 UCLASS()
-class BIGJAM01_API AMeleeEnemy : public ACharacter {
+class BIGJAM01_API AMeleeEnemy : public ABaseEnemy {
 	GENERATED_BODY()
 
 private:
@@ -34,13 +36,16 @@ private:
 
 	FTimerHandle InitiateAttackHandler;
 	FTimerHandle SingleAttackHandler;
+	FTimerHandle FlinchHandler;
 	bool bAttacking = false;
 	uint8 SelectedChain = 0;
 	uint8 AttackIndex = 0;
 
 	volatile bool bAttackSwing = false;
+	volatile bool bFlinching = false;
 
 	void SingleAttack(EMeleeAttackType AttackType);
+	void ClearAttacks();
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Attack")
@@ -60,11 +65,12 @@ protected:
 	virtual void BeginPlay() override;
 	void InitiateMeleeAttack();
 	void PerformAttack();
-
 	void AttackChain();
+	void OnFlinchRecover();
 
 public:
 	AMeleeEnemy();
 
 	UFUNCTION(BlueprintCallable) bool GetIsAttacking() { return bAttacking; }
+	virtual void OnHitByOpponent() override;
 };

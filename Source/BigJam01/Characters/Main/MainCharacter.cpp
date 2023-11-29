@@ -2,8 +2,10 @@
 
 #include "MainCharacter.h"
 #include "../ActorComponents/ComboComponent.h"
+#include "../Enemy/BaseEnemy.h"
 
 #include "Engine/LocalPlayer.h"
+#include "Components/BoxComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
@@ -38,8 +40,11 @@ AMainCharacter::AMainCharacter() {
 	GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
 	GetCharacterMovement()->BrakingDecelerationFalling = 1500.0f;
 
-	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
-	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
+	MeleeWeaponBox = CreateDefaultSubobject<UBoxComponent>(TEXT("MeleeWeaponBox"));
+	MeleeWeaponBox->SetBoxExtent(FVector(5.f, 5.f, 100.f));
+	MeleeWeaponBox->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, WeaponSocketR);
+	MeleeWeaponBox->bHiddenInGame = false;
+
 	ComboComponet = CreateDefaultSubobject<UComboComponent>(TEXT("ComboComponent"));
 
 }
@@ -53,6 +58,7 @@ UComboComponent* AMainCharacter::GetComboComponent() {
 
 void AMainCharacter::BeginPlay() {
 	Super::BeginPlay();
+	MeleeWeaponBox->OnComponentBeginOverlap.AddDynamic(this, &AMainCharacter::OnWeaponMeleeHit);
 }
 
 void AMainCharacter::SetDodgeWindow(bool IsOpen) {
@@ -87,7 +93,7 @@ void AMainCharacter::OnFlinchStop() {
 	bFlinching = false;
 }
 
-void AMainCharacter::OnHitByEnemy() {
+void AMainCharacter::OnHitByOpponent() {
 	if (FlinchMontage) {
 		GetMovementComponent()->StopActiveMovement();
 		float animationDelay = PlayAnimMontage(FlinchMontage);
@@ -122,3 +128,12 @@ void AMainCharacter::DodgeRoll() {
 }
 
 void AMainCharacter::FocusEnemy() {}
+
+void AMainCharacter::OnWeaponMeleeHit(UPrimitiveComponent* OverlappedComponent, AActor* actor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult) {
+	if (actor == this || !bAttacking) return;
+	ABaseEnemy* enemy = Cast<ABaseEnemy>(actor);
+	if (IsValid(enemy) && !ComboComponet->IsLastHitEnemy(enemy)) {
+		enemy->OnHitByOpponent();
+		ComboComponet->MarkLastHitEnemy(enemy);
+	}
+}

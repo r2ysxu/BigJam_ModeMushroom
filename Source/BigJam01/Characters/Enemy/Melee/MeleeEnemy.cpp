@@ -54,12 +54,16 @@ void AMeleeEnemy::AttackChain() {
 		bAttackSwing = false;
 		FAttackChain* AttackChain = &AttackChains[SelectedChain];
 		if (AttackIndex >= AttackChain->Attacks.Num()) {
-			AttackIndex = 0;
-			bAttacking = false;
+			ClearAttacks();
 		} else {
 			SingleAttack(AttackChain->Attacks[AttackIndex++]);
 		}
 	}
+}
+
+void AMeleeEnemy::OnFlinchRecover() {
+	bFlinching = false;
+	GetWorld()->GetTimerManager().PauseTimer(InitiateAttackHandler);
 }
 
 void AMeleeEnemy::SingleAttack(EMeleeAttackType AttackType) {
@@ -71,7 +75,7 @@ void AMeleeEnemy::SingleAttack(EMeleeAttackType AttackType) {
 }
 
 void AMeleeEnemy::OnWithinMeleeRange(UPrimitiveComponent* OverlappedComponent, AActor* actor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult) {
-	if (actor == this) return;
+	if (actor == this || bFlinching) return;
 	AMainCharacter* mc = Cast<AMainCharacter>(actor);
 	if (IsValid(mc)) {
 		GetWorld()->GetTimerManager().SetTimer(InitiateAttackHandler, this, &AMeleeEnemy::InitiateMeleeAttack, ATTACK_DELAY, true, INITIAL_ATTACK_DELAY);
@@ -87,8 +91,23 @@ void AMeleeEnemy::OnWeaponMeleeHit(UPrimitiveComponent* OverlappedComponent, AAc
 	if (actor == this || !bAttacking || !bAttackSwing) return;
 	AMainCharacter* mc = Cast<AMainCharacter>(actor);
 	if (IsValid(mc)) {
-		mc->OnHitByEnemy();
+		mc->OnHitByOpponent();
 		GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Yellow, TEXT("Hit"));
 		bAttackSwing = false;
+	}
+}
+
+void AMeleeEnemy::ClearAttacks() {
+	AttackIndex = 0;
+	bAttacking = false;
+	GetWorld()->GetTimerManager().ClearTimer(SingleAttackHandler);
+}
+
+void AMeleeEnemy::OnHitByOpponent() {
+	ClearAttacks();
+	if (FlinchMontage) {
+		float animationDelay = PlayAnimMontage(FlinchMontage);
+		GetWorld()->GetTimerManager().PauseTimer(InitiateAttackHandler);
+		GetWorld()->GetTimerManager().SetTimer(FlinchHandler, this, &AMeleeEnemy::OnFlinchRecover, animationDelay, false);
 	}
 }

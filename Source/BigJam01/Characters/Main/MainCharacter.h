@@ -23,19 +23,24 @@ class AMainCharacter : public ACharacter {
 
 private:
 	const float ROLL_VELOCITY = 500.f;
+	const FName WeaponSocketR = FName("hand_r");
 
 	FTimerHandle OnDodgeHandler;
 	FTimerHandle OnDodgeStopHandler;
 	FTimerHandle OnFlinchHandler;
 
+	class UBoxComponent* MeleeWeaponBox;
 	class UComboComponent* ComboComponet;
 
 	void InitiateAttack(class UAnimMontage* AnimMontage, EAttackType AttackType);
 
 protected:
+	volatile bool bAttacking = true;
 	volatile bool bRollWindowOpen = true;
 	volatile bool bRolling = false;
 	volatile bool bFlinching = false;
+
+	class ABaseEnemy* LastHitEnemy = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
 	class UAnimMontage* AttackLMontage;
@@ -62,6 +67,8 @@ protected:
 	virtual void AttackE();
 	virtual void DodgeRoll();
 	virtual void FocusEnemy();
+
+	UFUNCTION() void OnWeaponMeleeHit(UPrimitiveComponent* OverlappedComponent, AActor* actor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	
 	// To add mapping context
 	virtual void BeginPlay();
@@ -73,7 +80,8 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	void SetDodgeWindow(bool IsOpen);
-	UFUNCTION(BlueprintCallable) void OnHitByEnemy();
+	UFUNCTION(BlueprintCallable) void OnHitByOpponent();
 	FORCEINLINE bool GetIsDodging() { return bRolling; }
 	UFUNCTION(BlueprintCallable) class UComboComponent* GetComboComponent();
+
 };

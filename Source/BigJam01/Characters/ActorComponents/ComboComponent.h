@@ -28,6 +28,7 @@ private:
 	volatile bool bCanApplyDamage = false;
 	volatile bool bAttackWindowOpen = true;
 
+	class ABaseEnemy* LastHitEnemy;
 
 protected:
 	// Called when the game starts
@@ -44,4 +45,6 @@ public:
 	void OnNextCombo();
 	void OnComboReset();
 	void SetAttackWindow(bool IsOpen);
+	void MarkLastHitEnemy(class ABaseEnemy* Enemy);
+	bool IsLastHitEnemy(class ABaseEnemy* Enemy);
 };

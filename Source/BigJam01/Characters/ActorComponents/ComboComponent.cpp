@@ -37,11 +37,20 @@ void UComboComponent::OnNextCombo() {
 void UComboComponent::OnComboReset() {
 	SetAttackWindow(false);
 	PreviousAttacks.Empty();
+	LastHitEnemy = nullptr;
 	GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Emerald, TEXT("ResetCombo"));
 }
 
 void UComboComponent::SetAttackWindow(bool IsOpen) {
 	bAttackWindowOpen = IsOpen;
+}
+
+void UComboComponent::MarkLastHitEnemy(ABaseEnemy* Enemy) {
+	LastHitEnemy = Enemy;
+}
+
+bool UComboComponent::IsLastHitEnemy(ABaseEnemy* Enemy) {
+	return LastHitEnemy == Enemy;
 }
 
 // Called when the game starts
