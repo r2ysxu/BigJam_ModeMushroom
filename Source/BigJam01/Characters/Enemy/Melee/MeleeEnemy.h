@@ -37,7 +37,6 @@ private:
 	FTimerHandle InitiateAttackHandler;
 	FTimerHandle SingleAttackHandler;
 	FTimerHandle FlinchHandler;
-	bool bAttacking = false;
 	uint8 SelectedChain = 0;
 	uint8 AttackIndex = 0;
 

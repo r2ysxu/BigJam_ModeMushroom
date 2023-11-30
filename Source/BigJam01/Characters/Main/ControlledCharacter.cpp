@@ -35,7 +35,6 @@ void AControlledCharacter::BeginPlay() {
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
 	}
-	
 }
 
 void AControlledCharacter::Jump() {
@@ -59,8 +58,8 @@ void AControlledCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 		// Attack
 		EnhancedInputComponent->BindAction(AttackLAction, ETriggerEvent::Triggered, this, &AControlledCharacter::AttackL);
 		EnhancedInputComponent->BindAction(AttackRAction, ETriggerEvent::Triggered, this, &AControlledCharacter::AttackR);
-		EnhancedInputComponent->BindAction(AttackQAction, ETriggerEvent::Triggered, this, &AControlledCharacter::AttackQ);
-		EnhancedInputComponent->BindAction(AttackEAction, ETriggerEvent::Triggered, this, &AControlledCharacter::AttackE);
+		EnhancedInputComponent->BindAction(AttackQAction, ETriggerEvent::Completed, this, &AControlledCharacter::ChangePreviousWeapon);
+		EnhancedInputComponent->BindAction(AttackEAction, ETriggerEvent::Completed, this, &AControlledCharacter::ChangeNextWeapon);
 		//Dodge
 		EnhancedInputComponent->BindAction(DodgeAction, ETriggerEvent::Triggered, this, &AControlledCharacter::DodgeRoll);
 	}
@@ -100,4 +99,12 @@ void AControlledCharacter::Look(const FInputActionValue& Value) {
 
 void AControlledCharacter::OnScrollAxis(const FInputActionValue& Value) {
 	CameraBoom->TargetArmLength = FMath::Min(400.f, FMath::Max(50, CameraBoom->TargetArmLength - (Value.Get<float>() * CAMERA_SCROLL_SPEED)));
+}
+
+void AControlledCharacter::ChangeNextWeapon() {
+	EquipWeapon((EquipedWeaponIndex + 1) % AvailableWeapons.Num());
+}
+
+void AControlledCharacter::ChangePreviousWeapon() {
+	EquipWeapon((EquipedWeaponIndex - 1) % AvailableWeapons.Num());
 }

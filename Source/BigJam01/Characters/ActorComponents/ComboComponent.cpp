@@ -45,11 +45,11 @@ void UComboComponent::SetAttackWindow(bool IsOpen) {
 	bAttackWindowOpen = IsOpen;
 }
 
-void UComboComponent::MarkLastHitEnemy(ABaseEnemy* Enemy) {
+void UComboComponent::MarkLastHitEnemy(ABaseCharacter* Enemy) {
 	LastHitEnemy = Enemy;
 }
 
-bool UComboComponent::IsLastHitEnemy(ABaseEnemy* Enemy) {
+bool UComboComponent::IsLastHitEnemy(ABaseCharacter* Enemy) {
 	return LastHitEnemy == Enemy;
 }
 

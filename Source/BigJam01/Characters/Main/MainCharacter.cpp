@@ -2,10 +2,10 @@
 
 #include "MainCharacter.h"
 #include "../ActorComponents/ComboComponent.h"
+#include "../../Weapons/Melee/MeleeWeapon.h"
 #include "../Enemy/BaseEnemy.h"
 
 #include "Engine/LocalPlayer.h"
-#include "Components/BoxComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
@@ -40,10 +40,7 @@ AMainCharacter::AMainCharacter() {
 	GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
 	GetCharacterMovement()->BrakingDecelerationFalling = 1500.0f;
 
-	MeleeWeaponBox = CreateDefaultSubobject<UBoxComponent>(TEXT("MeleeWeaponBox"));
-	MeleeWeaponBox->SetBoxExtent(FVector(5.f, 5.f, 100.f));
-	MeleeWeaponBox->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, WeaponSocketR);
-	MeleeWeaponBox->bHiddenInGame = false;
+	GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	ComboComponet = CreateDefaultSubobject<UComboComponent>(TEXT("ComboComponent"));
 
@@ -58,11 +55,32 @@ UComboComponent* AMainCharacter::GetComboComponent() {
 
 void AMainCharacter::BeginPlay() {
 	Super::BeginPlay();
-	MeleeWeaponBox->OnComponentBeginOverlap.AddDynamic(this, &AMainCharacter::OnWeaponMeleeHit);
+	SetupWeapons();
+	EquipWeapon(0);
 }
 
 void AMainCharacter::SetDodgeWindow(bool IsOpen) {
 	bRollWindowOpen = IsOpen;
+}
+
+void AMainCharacter::OnHitTarget(ABaseCharacter* Target) {
+	if (!bAttacking) return;
+	if (IsValid(Target) && !ComboComponet->IsLastHitEnemy(Target)) {
+		Target->OnHitByOpponent();
+		ComboComponet->MarkLastHitEnemy(Target);
+	}
+}
+
+void AMainCharacter::SetupWeapons() {
+	for (int i = 0; i < EquippableWeaponClasses.Num(); i++) {
+		FSpawnMeleeWeapon* weaponInfo = &EquippableWeaponClasses[i];
+		AMeleeWeapon* weapon = GetWorld()->SpawnActor<AMeleeWeapon>(weaponInfo->WeaponClass);
+		if (IsValid(weapon)) {
+			weapon->SetWielder(this);
+			weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, weaponInfo->SocketName);
+			AvailableWeapons.Add(weapon);
+		}
+	}
 }
 
 void AMainCharacter::InitiateAttack(class UAnimMontage* AnimMontage, EAttackType AttackType) {
@@ -93,6 +111,11 @@ void AMainCharacter::OnFlinchStop() {
 	bFlinching = false;
 }
 
+AMeleeWeapon* AMainCharacter::GetEquippedWeapon() {
+	if (!AvailableWeapons.IsValidIndex(EquipedWeaponIndex)) return nullptr;
+	else return AvailableWeapons[EquipedWeaponIndex];
+}
+
 void AMainCharacter::OnHitByOpponent() {
 	if (FlinchMontage) {
 		GetMovementComponent()->StopActiveMovement();
@@ -109,14 +132,6 @@ void AMainCharacter::AttackR() {
 	InitiateAttack(AttackRMontage, EAttackType::VE_R);
 }
 
-void AMainCharacter::AttackQ() {
-	InitiateAttack(AttackQMontage, EAttackType::VE_Q);
-}
-
-void AMainCharacter::AttackE() {
-	InitiateAttack(AttackEMontage, EAttackType::VE_E);
-}
-
 void AMainCharacter::DodgeRoll() {
 	if (DodgeMontage && !bRolling && !GetMovementComponent()->IsFalling() && bRollWindowOpen) {
 		bRolling = true;
@@ -129,11 +144,12 @@ void AMainCharacter::DodgeRoll() {
 
 void AMainCharacter::FocusEnemy() {}
 
-void AMainCharacter::OnWeaponMeleeHit(UPrimitiveComponent* OverlappedComponent, AActor* actor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult) {
-	if (actor == this || !bAttacking) return;
-	ABaseEnemy* enemy = Cast<ABaseEnemy>(actor);
-	if (IsValid(enemy) && !ComboComponet->IsLastHitEnemy(enemy)) {
-		enemy->OnHitByOpponent();
-		ComboComponet->MarkLastHitEnemy(enemy);
+void AMainCharacter::EquipWeapon(uint32 WeaponIndex) {
+	if (AvailableWeapons.IsValidIndex(WeaponIndex)) {
+		GetEquippedWeapon()->DetachFromActor(FDetachmentTransformRules::KeepRelativeTransform);
+		GetEquippedWeapon()->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, EquippableWeaponClasses[EquipedWeaponIndex].SocketName);
+		EquipedWeaponIndex = WeaponIndex;
+		GetEquippedWeapon()->DetachFromActor(FDetachmentTransformRules::KeepRelativeTransform);
+		GetEquippedWeapon()->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, WeaponSocket);
 	}
 }

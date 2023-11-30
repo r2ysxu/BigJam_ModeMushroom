@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include "../BaseCharacter.h"
+#include "../../Weapons/Melee/MeleeWeapon.h"
 #include "../ActorComponents/ComboComponent.h"
 
 #include "CoreMinimal.h"
@@ -18,18 +20,17 @@ struct FInputActionValue;
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
 UCLASS(config=Game)
-class AMainCharacter : public ACharacter {
+class AMainCharacter : public ABaseCharacter {
 	GENERATED_BODY()
 
 private:
 	const float ROLL_VELOCITY = 500.f;
-	const FName WeaponSocketR = FName("hand_r");
+	const FName WeaponSocket = FName("weapon");
 
 	FTimerHandle OnDodgeHandler;
 	FTimerHandle OnDodgeStopHandler;
 	FTimerHandle OnFlinchHandler;
 
-	class UBoxComponent* MeleeWeaponBox;
 	class UComboComponent* ComboComponet;
 
 	void InitiateAttack(class UAnimMontage* AnimMontage, EAttackType AttackType);
@@ -39,17 +40,16 @@ protected:
 	volatile bool bRollWindowOpen = true;
 	volatile bool bRolling = false;
 	volatile bool bFlinching = false;
+	
+	uint32 EquipedWeaponIndex = 0;
+	TArray<class AMeleeWeapon*> AvailableWeapons;
 
-	class ABaseEnemy* LastHitEnemy = nullptr;
-
+	UPROPERTY(EditAnywhere, BLueprintReadWrite, Category = "Weapons")
+	TArray<FSpawnMeleeWeapon> EquippableWeaponClasses;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
 	class UAnimMontage* AttackLMontage;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
 	class UAnimMontage* AttackRMontage;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
-	class UAnimMontage* AttackEMontage;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
-	class UAnimMontage* AttackQMontage;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
 	class UAnimMontage* DodgeMontage;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
@@ -60,18 +60,15 @@ protected:
 	void OnDodgeRoll();
 	void OnDodgeRollStop();
 	void OnFlinchStop();
-
+	
+	virtual void BeginPlay() override;
+	virtual void SetupWeapons() override;
 	virtual void AttackL();
 	virtual void AttackR();
-	virtual void AttackQ();
-	virtual void AttackE();
 	virtual void DodgeRoll();
 	virtual void FocusEnemy();
-
-	UFUNCTION() void OnWeaponMeleeHit(UPrimitiveComponent* OverlappedComponent, AActor* actor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	
-	// To add mapping context
-	virtual void BeginPlay();
+	void EquipWeapon(uint32 WeaponIndex);
 
 public:
 	AMainCharacter();
@@ -80,7 +77,11 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	void SetDodgeWindow(bool IsOpen);
+	virtual void OnHitTarget(class ABaseCharacter* Target);
+
+	class AMeleeWeapon* GetEquippedWeapon();
 	UFUNCTION(BlueprintCallable) void OnHitByOpponent();
+	FORCEINLINE virtual uint8 GetTeam() override { return 1; }
 	FORCEINLINE bool GetIsDodging() { return bRolling; }
 	UFUNCTION(BlueprintCallable) class UComboComponent* GetComboComponent();
 

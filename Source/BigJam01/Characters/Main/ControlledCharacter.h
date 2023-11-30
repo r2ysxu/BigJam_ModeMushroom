@@ -60,6 +60,9 @@ protected:
 	void Look(const FInputActionValue& Value);
 	void OnScrollAxis(const FInputActionValue& Value);
 
+	void ChangeNextWeapon();
+	void ChangePreviousWeapon();
+
 public:
 	AControlledCharacter();
 

@@ -2,12 +2,14 @@
 
 #pragma once
 
+#include "../BaseCharacter.h"
+
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "BaseEnemy.generated.h"
 
 UCLASS(Abstract)
-class BIGJAM01_API ABaseEnemy : public ACharacter {
+class BIGJAM01_API ABaseEnemy : public ABaseCharacter {
 	GENERATED_BODY()
 
 protected:
@@ -17,5 +19,6 @@ protected:
 public:	
 	ABaseEnemy();
 
-	virtual void OnHitByOpponent() {}
+	virtual void OnHitByOpponent() override {};
+	FORCEINLINE virtual uint8 GetTeam() { return 2; }
 };
