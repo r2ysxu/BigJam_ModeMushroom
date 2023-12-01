@@ -26,6 +26,8 @@ AMeleeWeapon::AMeleeWeapon() {
 	//MeleeWeaponBox->bHiddenInGame = false;
 }
 
+void AMeleeWeapon::ApplyDebuffEnhancement(EComboDebuffType DebuffType) {}
+
 // Called when the game starts or when spawned
 void AMeleeWeapon::BeginPlay() {
 	Super::BeginPlay();

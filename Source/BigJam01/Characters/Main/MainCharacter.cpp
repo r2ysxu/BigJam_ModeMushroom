@@ -63,12 +63,14 @@ void AMainCharacter::SetDodgeWindow(bool IsOpen) {
 	bRollWindowOpen = IsOpen;
 }
 
-void AMainCharacter::OnHitTarget(ABaseCharacter* Target) {
-	if (!bAttacking) return;
+bool AMainCharacter::OnHitTarget(ABaseCharacter* Target) {
+	if (!bAttacking) return false;
 	if (IsValid(Target) && !ComboComponet->IsLastHitEnemy(Target)) {
 		Target->OnHitByOpponent();
 		ComboComponet->MarkLastHitEnemy(Target);
+		return true;
 	}
+	return false;
 }
 
 void AMainCharacter::SetupWeapons() {
@@ -83,9 +85,9 @@ void AMainCharacter::SetupWeapons() {
 	}
 }
 
-void AMainCharacter::InitiateAttack(class UAnimMontage* AnimMontage, EAttackType AttackType) {
+void AMainCharacter::InitiateAttack(EAttackType AttackType) {
 	if (CanMoveAndAttack()) {
-		ComboComponet->InitiateAttack(AnimMontage, AttackType);
+		ComboComponet->InitiateAttack(AttackType);
 	}
 }
 
@@ -125,11 +127,11 @@ void AMainCharacter::OnHitByOpponent() {
 }
 
 void AMainCharacter::AttackL() {
-	InitiateAttack(AttackLMontage, EAttackType::VE_L);
+	InitiateAttack(EAttackType::VE_L);
 }
 
 void AMainCharacter::AttackR() {
-	InitiateAttack(AttackRMontage, EAttackType::VE_R);
+	InitiateAttack(EAttackType::VE_R);
 }
 
 void AMainCharacter::DodgeRoll() {

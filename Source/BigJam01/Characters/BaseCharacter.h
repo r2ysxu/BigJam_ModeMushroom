@@ -19,7 +19,7 @@ protected:
 public:
 	ABaseCharacter();
 
-	virtual void OnHitTarget(class ABaseCharacter* Target);
+	virtual bool OnHitTarget(class ABaseCharacter* Target);
 	virtual void OnHitByOpponent() {}
 	FORCEINLINE virtual uint8 GetTeam() { return 0; }
 	FORCEINLINE virtual bool GetIsAttacking() { return bAttacking; }

@@ -8,7 +8,7 @@ ABaseCharacter::ABaseCharacter() {
 	PrimaryActorTick.bCanEverTick = false;
 }
 
-void ABaseCharacter::OnHitTarget(ABaseCharacter* Target) {}
+bool ABaseCharacter::OnHitTarget(ABaseCharacter* Target) { return false; }
 
 // Called when the game starts or when spawned
 void ABaseCharacter::BeginPlay() {

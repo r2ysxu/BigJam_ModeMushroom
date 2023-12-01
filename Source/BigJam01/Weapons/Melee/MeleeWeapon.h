@@ -3,6 +3,7 @@
 #pragma once
 
 #include "../BaseWeapon.h"
+#include "../../Characters/ActorComponents/ComboComponent.h"
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
@@ -36,4 +37,6 @@ protected:
 
 public:	
 	AMeleeWeapon();
+
+	void ApplyDebuffEnhancement(enum EComboDebuffType DebuffType);
 };

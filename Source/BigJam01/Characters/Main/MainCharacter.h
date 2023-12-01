@@ -31,9 +31,7 @@ private:
 	FTimerHandle OnDodgeStopHandler;
 	FTimerHandle OnFlinchHandler;
 
-	class UComboComponent* ComboComponet;
-
-	void InitiateAttack(class UAnimMontage* AnimMontage, EAttackType AttackType);
+	void InitiateAttack(EAttackType AttackType);
 
 protected:
 	volatile bool bAttacking = true;
@@ -46,10 +44,8 @@ protected:
 
 	UPROPERTY(EditAnywhere, BLueprintReadWrite, Category = "Weapons")
 	TArray<FSpawnMeleeWeapon> EquippableWeaponClasses;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
-	class UAnimMontage* AttackLMontage;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
-	class UAnimMontage* AttackRMontage;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapons")
+	class UComboComponent* ComboComponet;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
 	class UAnimMontage* DodgeMontage;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
@@ -77,7 +73,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	void SetDodgeWindow(bool IsOpen);
-	virtual void OnHitTarget(class ABaseCharacter* Target);
+	virtual bool OnHitTarget(class ABaseCharacter* Target);
 
 	class AMeleeWeapon* GetEquippedWeapon();
 	UFUNCTION(BlueprintCallable) void OnHitByOpponent();
