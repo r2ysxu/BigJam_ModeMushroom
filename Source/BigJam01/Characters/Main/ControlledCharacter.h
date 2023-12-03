@@ -54,11 +54,19 @@ private:
 	const float CAMERA_SCROLL_SPEED = 5.f;
 
 protected:
+	bool bAttackLHeld = false;
+	bool bAttackRHeld = false;
+
 	virtual void BeginPlay() override;
 	void Jump();
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
 	void OnScrollAxis(const FInputActionValue& Value);
+
+	void OnAttackLClick();
+	void OnAttackLReleased();
+	void OnAttackRClicked();
+	void OnAttackRReleased();
 
 	void ChangeNextWeapon();
 	void ChangePreviousWeapon();

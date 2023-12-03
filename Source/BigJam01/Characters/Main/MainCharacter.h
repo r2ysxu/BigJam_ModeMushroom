@@ -31,6 +31,7 @@ private:
 	FTimerHandle OnDodgeStopHandler;
 	FTimerHandle OnFlinchHandler;
 
+	void SetupHUDs();
 	void InitiateAttack(EAttackType AttackType);
 
 protected:
@@ -46,13 +47,21 @@ protected:
 	TArray<FSpawnMeleeWeapon> EquippableWeaponClasses;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapons")
 	class UComboComponent* ComboComponet;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapons")
+	class UDirectionalAttackComponent* DaoComponet;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
 	class UAnimMontage* DodgeMontage;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
 	class UAnimMontage* FlinchMontage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HUD")
+	TSubclassOf<class UComboHUD> ComboHudClass;
+	class UComboHUD* ComboHud;
 	
+	bool CanMove();
 	bool CanMoveAndAttack();
 
+	void SetMovementDirection(FVector2D MovementVector);
 	void OnDodgeRoll();
 	void OnDodgeRollStop();
 	void OnFlinchStop();
@@ -74,11 +83,16 @@ public:
 
 	void SetDodgeWindow(bool IsOpen);
 	virtual bool OnHitTarget(class ABaseCharacter* Target);
-
+	
+	void SetIsAttacking(bool IsAttacking);
 	class AMeleeWeapon* GetEquippedWeapon();
-	UFUNCTION(BlueprintCallable) void OnHitByOpponent();
+	void OnNextCombo();
+	void OnComboReset();
+	FORCEINLINE bool GetIsAttacking() { return bAttacking; }
 	FORCEINLINE virtual uint8 GetTeam() override { return 1; }
 	FORCEINLINE bool GetIsDodging() { return bRolling; }
+	UFUNCTION(BlueprintCallable) void OnHitByOpponent();
 	UFUNCTION(BlueprintCallable) class UComboComponent* GetComboComponent();
+	class UComboHUD* GetComboHud();
 
 };

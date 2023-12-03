@@ -12,6 +12,7 @@
 void UMainAnimInstance::NativeInitializeAnimation() {
 	Super::NativeInitializeAnimation();
 	Owner = Cast<AMainCharacter>(TryGetPawnOwner());
+	SetRootMotionMode(ERootMotionMode::RootMotionFromMontagesOnly);
 }
 
 void UMainAnimInstance::NativeUpdateAnimation(float DeltaSeconds) {
@@ -26,11 +27,11 @@ ACharacter* UMainAnimInstance::GetOwner() {
 }
 
 void UMainAnimInstance::NextAttackComboWindow() {
-	Owner->GetComboComponent()->OnNextCombo();
+	Owner->OnNextCombo();
 }
 
 void UMainAnimInstance::ResetCombo() {
-	Owner->GetComboComponent()->OnComboReset();
+	Owner->OnComboReset();
 }
 
 void UMainAnimInstance::DodgeWindowOpen() {

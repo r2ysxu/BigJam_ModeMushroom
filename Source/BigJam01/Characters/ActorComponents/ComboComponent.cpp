@@ -4,6 +4,7 @@
 #include "ComboComponent.h"
 #include "../Main/MainCharacter.h"
 #include "../../Weapons/Melee/MeleeWeapon.h"
+#include "../../Widgets/HUDs/ComboHUD.h"
 
 #include "Components/ActorComponent.h"
 #include "GameFramework/Character.h"
@@ -17,13 +18,25 @@ UComboComponent::UComboComponent() {
 }
 
 void UComboComponent::InitiateAttack(EAttackType AttackType) {
-	if (bAttackWindowOpen && IsAttackChainable(AttackType) && !Owner->GetIsDodging()) {
-		bCanApplyDamage = true;
-		bAttackWindowOpen = false;
-		Owner->SetDodgeWindow(false);
-		ApplyStatusToWeapon();
-		float animationDelay = Owner->PlayAnimMontage(AttackMontages[(uint8) AttackType]);
-		GetWorld()->GetTimerManager().SetTimer(OnAttackHandler, this, &UComboComponent::OnAttackStop, animationDelay, false);
+	if (IsAttackChainable(AttackType) && !Owner->GetIsDodging()) {
+		if (!bAttackWindowOpen && ComboChain > 0) {
+			bAttackWindowMissed = true;
+			ClearHUD();
+		} else if (!bAttackWindowMissed) {
+			bCanApplyDamage = true;
+			bAttackWindowOpen = false;
+			Owner->SetIsAttacking(true);
+			Owner->SetDodgeWindow(false);
+			ComboChain++;
+			ApplyStatusToWeapon();
+			float animationDelay = Owner->PlayAnimMontage(AttackMontages[(uint8)AttackType]);
+			GetWorld()->GetTimerManager().SetTimer(OnAttackHandler, this, &UComboComponent::OnAttackStop, animationDelay, false);
+			if (ComboNode->Debuff == EComboDebuffType::VE_NONE) {
+				UpdateHUDs(AttackMontages[(uint8)AttackType], animationDelay);
+			} else {
+				ClearHUD();
+			}
+		}
 	}
 }
 
@@ -31,6 +44,7 @@ void UComboComponent::OnAttackStop() {
 	OnComboReset();
 	SetAttackWindow(true);
 	bCanApplyDamage = false;
+	Owner->SetIsAttacking(false);
 	Owner->SetDodgeWindow(true);
 }
 
@@ -40,8 +54,11 @@ void UComboComponent::OnNextCombo() {
 
 void UComboComponent::OnComboReset() {
 	SetAttackWindow(false);
+	ComboChain = 0;
 	ComboNode = ComboChains;
 	LastHitEnemy = nullptr;
+	bAttackWindowMissed = false;
+	ClearHUD();
 	GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Emerald, TEXT("ResetCombo"));
 }
 
@@ -55,6 +72,26 @@ void UComboComponent::MarkLastHitEnemy(ABaseCharacter* Enemy) {
 
 bool UComboComponent::IsLastHitEnemy(ABaseCharacter* Enemy) {
 	return LastHitEnemy == Enemy;
+}
+
+void UComboComponent::UpdateHUDs(UAnimMontage* AnimMontage, float AnimTime) {
+	TArray<const FAnimNotifyEvent*> animNotifies;
+	AnimMontage->GetAnimNotifies(0.f, AnimTime, false, animNotifies);
+	float startTime = 0;
+	float endTime = 0;
+	for (int i = 0; i < animNotifies.Num(); i++) {
+		if (FName("AnimNotify_NextAttackCombo").IsEqual(animNotifies[i]->GetNotifyEventName())) {
+			startTime = animNotifies[i]->GetTriggerTime();
+		} else if (FName("AnimNotify_ResetCombo").IsEqual(animNotifies[i]->GetNotifyEventName())) {
+			endTime = animNotifies[i]->GetTriggerTime();
+		}
+		Owner->GetComboHud()->SetTimingRange(AnimTime, FVector2D(startTime, endTime));
+		Owner->GetComboHud()->PlayTimer();
+	}
+}
+
+void UComboComponent::ClearHUD() {
+	Owner->GetComboHud()->OnHide();
 }
 
 void UComboComponent::ConstructCombos() {

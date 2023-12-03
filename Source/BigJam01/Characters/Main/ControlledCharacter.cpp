@@ -38,7 +38,7 @@ void AControlledCharacter::BeginPlay() {
 }
 
 void AControlledCharacter::Jump() {
-	if (CanMoveAndAttack()) {
+	if (CanMove()) {
 		Super::Jump();
 	}
 }
@@ -56,8 +56,10 @@ void AControlledCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AControlledCharacter::Look);
 		EnhancedInputComponent->BindAction(ScrollAction, ETriggerEvent::Triggered, this, &AControlledCharacter::OnScrollAxis);
 		// Attack
-		EnhancedInputComponent->BindAction(AttackLAction, ETriggerEvent::Triggered, this, &AControlledCharacter::AttackL);
-		EnhancedInputComponent->BindAction(AttackRAction, ETriggerEvent::Triggered, this, &AControlledCharacter::AttackR);
+		EnhancedInputComponent->BindAction(AttackLAction, ETriggerEvent::Triggered, this, &AControlledCharacter::OnAttackLClick);
+		EnhancedInputComponent->BindAction(AttackLAction, ETriggerEvent::Completed, this, &AControlledCharacter::OnAttackLReleased);
+		EnhancedInputComponent->BindAction(AttackRAction, ETriggerEvent::Triggered, this, &AControlledCharacter::OnAttackRClicked);
+		EnhancedInputComponent->BindAction(AttackRAction, ETriggerEvent::Completed, this, &AControlledCharacter::OnAttackRReleased);
 		EnhancedInputComponent->BindAction(AttackQAction, ETriggerEvent::Completed, this, &AControlledCharacter::ChangePreviousWeapon);
 		EnhancedInputComponent->BindAction(AttackEAction, ETriggerEvent::Completed, this, &AControlledCharacter::ChangeNextWeapon);
 		//Dodge
@@ -69,7 +71,7 @@ void AControlledCharacter::Move(const FInputActionValue& Value) {
 	// input is a Vector2D
 	FVector2D MovementVector = Value.Get<FVector2D>();
 
-	if (Controller != nullptr && CanMoveAndAttack()) {
+	if (Controller != nullptr && CanMove()) {
 		// find out which way is forward
 		const FRotator Rotation = Controller->GetControlRotation();
 		const FRotator YawRotation(0, Rotation.Yaw, 0);
@@ -83,6 +85,7 @@ void AControlledCharacter::Move(const FInputActionValue& Value) {
 		// add movement 
 		AddMovementInput(ForwardDirection, MovementVector.Y);
 		AddMovementInput(RightDirection, MovementVector.X);
+		SetMovementDirection(MovementVector);
 	}
 }
 
@@ -99,6 +102,28 @@ void AControlledCharacter::Look(const FInputActionValue& Value) {
 
 void AControlledCharacter::OnScrollAxis(const FInputActionValue& Value) {
 	CameraBoom->TargetArmLength = FMath::Min(400.f, FMath::Max(50, CameraBoom->TargetArmLength - (Value.Get<float>() * CAMERA_SCROLL_SPEED)));
+}
+
+void AControlledCharacter::OnAttackLClick() {
+	if (!bAttackLHeld) {
+		bAttackLHeld = true;
+		AttackL();
+	}
+}
+
+void AControlledCharacter::OnAttackLReleased() {
+	bAttackLHeld = false;
+}
+
+void AControlledCharacter::OnAttackRClicked() {
+	if (!bAttackRHeld) {
+		bAttackRHeld = true;
+		AttackR();
+	}
+}
+
+void AControlledCharacter::OnAttackRReleased() {
+	bAttackRHeld = false;
 }
 
 void AControlledCharacter::ChangeNextWeapon() {

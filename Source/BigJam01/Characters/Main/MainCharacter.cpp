@@ -2,13 +2,16 @@
 
 #include "MainCharacter.h"
 #include "../ActorComponents/ComboComponent.h"
+#include "../ActorComponents/DirectionalAttackComponent.h"
 #include "../../Weapons/Melee/MeleeWeapon.h"
 #include "../Enemy/BaseEnemy.h"
+#include "../../Widgets/HUDs/ComboHUD.h"
 
 #include "Engine/LocalPlayer.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
+#include "Blueprint/UserWidget.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -43,7 +46,7 @@ AMainCharacter::AMainCharacter() {
 	GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	ComboComponet = CreateDefaultSubobject<UComboComponent>(TEXT("ComboComponent"));
-
+	DaoComponet = CreateDefaultSubobject<UDirectionalAttackComponent>(TEXT("DirectionalAttackComponent"));
 }
 
 void AMainCharacter::Tick(float DeltaTime) {
@@ -53,8 +56,13 @@ UComboComponent* AMainCharacter::GetComboComponent() {
 	return ComboComponet;
 }
 
+UComboHUD* AMainCharacter::GetComboHud() {
+	return ComboHud;
+}
+
 void AMainCharacter::BeginPlay() {
 	Super::BeginPlay();
+	SetupHUDs();
 	SetupWeapons();
 	EquipWeapon(0);
 }
@@ -85,14 +93,46 @@ void AMainCharacter::SetupWeapons() {
 	}
 }
 
+void AMainCharacter::SetupHUDs() {
+	ComboHud = CreateWidget<UComboHUD>(GetWorld(), ComboHudClass);
+	if (ComboHud) {
+		ComboHud->AddToViewport();
+	}
+}
+
+void AMainCharacter::OnNextCombo() {
+	switch (EquipedWeaponIndex) {
+	case 0: ComboComponet->OnNextCombo(); break;
+	case 1: DaoComponet->OnNextCombo(); break;
+	}
+}
+
+void AMainCharacter::OnComboReset() {
+	switch (EquipedWeaponIndex) {
+	case 0: ComboComponet->OnComboReset(); break;
+	case 1: DaoComponet->OnComboReset(); break;
+	}
+}
+
 void AMainCharacter::InitiateAttack(EAttackType AttackType) {
 	if (CanMoveAndAttack()) {
-		ComboComponet->InitiateAttack(AttackType);
+		switch (EquipedWeaponIndex) {
+		case 0: ComboComponet->InitiateAttack(AttackType); break;
+		case 1: DaoComponet->InitiateAttack(AttackType); break;
+		}
 	}
+}
+
+bool AMainCharacter::CanMove() {
+	return !GetIsDodging() && !bFlinching && !bAttacking;
 }
 
 bool AMainCharacter::CanMoveAndAttack() {
 	return !GetIsDodging() && !bFlinching;
+}
+
+void AMainCharacter::SetMovementDirection(FVector2D MovementVector) {
+	DaoComponet->SetDirectionalMovement(MovementVector);
 }
 
 void AMainCharacter::OnDodgeRoll() {
@@ -113,6 +153,10 @@ void AMainCharacter::OnFlinchStop() {
 	bFlinching = false;
 }
 
+void AMainCharacter::SetIsAttacking(bool IsAttacking) {
+	bAttacking = IsAttacking;
+}
+
 AMeleeWeapon* AMainCharacter::GetEquippedWeapon() {
 	if (!AvailableWeapons.IsValidIndex(EquipedWeaponIndex)) return nullptr;
 	else return AvailableWeapons[EquipedWeaponIndex];
@@ -127,6 +171,7 @@ void AMainCharacter::OnHitByOpponent() {
 }
 
 void AMainCharacter::AttackL() {
+	GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Yellow, TEXT("Click"));
 	InitiateAttack(EAttackType::VE_L);
 }
 
@@ -153,5 +198,6 @@ void AMainCharacter::EquipWeapon(uint32 WeaponIndex) {
 		EquipedWeaponIndex = WeaponIndex;
 		GetEquippedWeapon()->DetachFromActor(FDetachmentTransformRules::KeepRelativeTransform);
 		GetEquippedWeapon()->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, WeaponSocket);
+		ComboComponet->SetWeapon(GetEquippedWeapon());
 	}
 }
