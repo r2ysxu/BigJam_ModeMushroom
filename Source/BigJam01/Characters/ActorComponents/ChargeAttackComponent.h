@@ -17,6 +17,8 @@ private:
 	class AMainCharacter* Owner;
 
 protected:
+	const float StaminaDrainPerAttack = 0.25f;
+
 	FTimerHandle OnChargeUpHandle;
 	FTimerHandle OnAttackHandler;
 

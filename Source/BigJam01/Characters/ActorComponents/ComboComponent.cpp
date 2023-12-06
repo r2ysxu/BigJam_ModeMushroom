@@ -22,7 +22,7 @@ void UComboComponent::InitiateAttack(EAttackType AttackType) {
 		if (!bAttackWindowOpen && ComboChain > 0) {
 			bAttackWindowMissed = true;
 			ClearHUD();
-		} else if (!bAttackWindowMissed) {
+		} else if (!bAttackWindowMissed && Owner->DrainStamina(StaminaDrainPerAttack)) {
 			bCanApplyDamage = true;
 			bAttackWindowOpen = false;
 			Owner->SetIsAttacking(true);

@@ -24,7 +24,7 @@ bool UChargeAttackComponent::IsAttackChainable(EAttackType CurrentAttack) {
 
 void UChargeAttackComponent::InitiateAttack(EAttackType AttackType) {
 	if (AttackType != EAttackType::VE_R) return;
-	if (IsAttackChainable(AttackType) && !Owner->GetIsDodging() && bAttackWindowOpen) {
+	if (IsAttackChainable(AttackType) && !Owner->GetIsDodging() && bAttackWindowOpen && Owner->DrainStamina(StaminaDrainPerAttack)) {
 		float animationDelay = Owner->PlayAnimMontage(AttackMontages[ComboChain]);
 		GetWorld()->GetTimerManager().SetTimer(OnAttackHandler, this, &UChargeAttackComponent::OnAttackStop, animationDelay, false);
 		ComboChain++;

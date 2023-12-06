@@ -30,6 +30,7 @@ private:
 	FTimerHandle OnDodgeHandler;
 	FTimerHandle OnDodgeStopHandler;
 	FTimerHandle OnFlinchHandler;
+	FTimerHandle OnStaminaHandler;
 
 	void SetupHUDs();
 	void InitiateAttack(EAttackType AttackType);
@@ -44,11 +45,15 @@ protected:
 	volatile bool bAttackRHeld = false;
 
 	volatile bool bFocusing = false;
-	
+
 	uint32 EquipedWeaponIndex = 0;
 	TArray<class AMeleeWeapon*> AvailableWeapons;
 	class ABaseEnemy* FocusedTarget = nullptr;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Stats")
+	float Stamina = 1.f;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Stats")
+	float StaminaRegenRate = .1f;
 	UPROPERTY(EditAnywhere, BLueprintReadWrite, Category = "Weapons")
 	TArray<FSpawnMeleeWeapon> EquippableWeaponClasses;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapons")
@@ -65,6 +70,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HUD")
 	TSubclassOf<class UComboHUD> ComboHudClass;
 	class UComboHUD* ComboHud;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HUD")
+	TSubclassOf<class UPlayerStatHUD> PlayerHudClass;
+	class UPlayerStatHUD* PlayerHud;
 	
 	bool CanMove();
 	bool CanMoveAndAttack();
@@ -96,11 +104,14 @@ public:
 	class AMeleeWeapon* GetEquippedWeapon();
 	void OnNextCombo();
 	void OnComboReset();
+	void OnStaminaRegen();
 	FORCEINLINE bool GetIsAttacking() { return bAttacking; }
 	FORCEINLINE virtual uint8 GetTeam() override { return 1; }
 	FORCEINLINE bool GetIsDodging() { return bRolling; }
 	FORCEINLINE bool GetIsCharging() { return bAttackRHeld; }
+	FORCEINLINE UFUNCTION(BlueprintCallable) float GetStamina();
 	bool HasCharged();
+	UFUNCTION(BlueprintCallable) bool DrainStamina(float Value);
 	UFUNCTION(BlueprintCallable) void OnHitByOpponent();
 	UFUNCTION(BlueprintCallable) class UComboComponent* GetComboComponent();
 	class UComboHUD* GetComboHud();

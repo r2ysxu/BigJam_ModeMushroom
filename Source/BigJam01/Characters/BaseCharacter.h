@@ -13,6 +13,9 @@ class BIGJAM01_API ABaseCharacter : public ACharacter {
 protected:
 	bool bAttacking = false;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Stats")
+	float Health = 1.f;
+
 	virtual void BeginPlay() override;
 	virtual void SetupWeapons() {}
 

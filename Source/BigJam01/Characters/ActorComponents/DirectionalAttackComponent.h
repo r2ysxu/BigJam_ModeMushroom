@@ -20,6 +20,8 @@ class BIGJAM01_API UDirectionalAttackComponent : public UActorComponent {
 	GENERATED_BODY()
 
 private:
+	const float StaminaDrainPerAttack = .20f;
+
 	class AMainCharacter* Owner;
 	int CurrentAttackIndex = 0;
 	bool bAttacking = false;

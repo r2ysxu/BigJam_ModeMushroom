@@ -7,6 +7,7 @@
 #include "../../Weapons/Melee/MeleeWeapon.h"
 #include "../Enemy/BaseEnemy.h"
 #include "../../Widgets/HUDs/ComboHUD.h"
+#include "../../Widgets/HUDs/PlayerStatHUD.h"
 
 #include "Engine/LocalPlayer.h"
 #include "Components/CapsuleComponent.h"
@@ -57,7 +58,6 @@ void AMainCharacter::Tick(float DeltaTime) {
 	if (bFocusing && FocusedTarget) {
 		FRotator rotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), FocusedTarget->GetActorLocation());
 		GetController()->SetControlRotation(FMath::RInterpTo(GetActorRotation(), rotation, DeltaTime, 2.f));
-		//SetActorRotation(FMath::RInterpTo(GetActorRotation(), rotation, DeltaTime, 2.f));
 	}
 }
 
@@ -74,6 +74,7 @@ void AMainCharacter::BeginPlay() {
 	SetupHUDs();
 	SetupWeapons();
 	EquipWeapon(0);
+	GetWorld()->GetTimerManager().SetTimer(OnStaminaHandler, this, &AMainCharacter::OnStaminaRegen, 0.5f, true);
 }
 
 void AMainCharacter::SetDodgeWindow(bool IsOpen) {
@@ -108,6 +109,11 @@ void AMainCharacter::SetupHUDs() {
 		ComboHud->AddToViewport();
 		ComboHud->SetVisibility(ESlateVisibility::Hidden);
 	}
+	PlayerHud = CreateWidget<UPlayerStatHUD>(GetWorld(), PlayerHudClass);
+	if (PlayerHud) {
+		PlayerHud->SetPlayer(this);
+		PlayerHud->AddToViewport();
+	}
 }
 
 void AMainCharacter::OnNextCombo() {
@@ -121,6 +127,12 @@ void AMainCharacter::OnComboReset() {
 	switch (EquipedWeaponIndex) {
 	case 0: ComboComponet->OnComboReset(); break;
 	case 1: DaoComponet->OnComboReset(); break;
+	}
+}
+
+void AMainCharacter::OnStaminaRegen() {
+	if (!bAttacking && !GetIsDodging()) {
+		Stamina = FMath::Min(1.f, StaminaRegenRate + Stamina);
 	}
 }
 
@@ -175,8 +187,18 @@ AMeleeWeapon* AMainCharacter::GetEquippedWeapon() {
 	else return AvailableWeapons[EquipedWeaponIndex];
 }
 
+float AMainCharacter::GetStamina() {
+	return Stamina;
+}
+
 bool AMainCharacter::HasCharged() {
 	return ChargeComponent->OnChargedUp();
+}
+
+bool AMainCharacter::DrainStamina(float Value) {
+	if (Value > Stamina) return false;
+	else Stamina -= Value;
+	return true;
 }
 
 void AMainCharacter::OnHitByOpponent() {
@@ -188,7 +210,6 @@ void AMainCharacter::OnHitByOpponent() {
 }
 
 void AMainCharacter::AttackL() {
-	GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Yellow, TEXT("Click"));
 	InitiateAttack(EAttackType::VE_L);
 }
 
@@ -210,12 +231,11 @@ void AMainCharacter::FocusEnemy() {
 	float Range = 500.f;
 	const TArray<AActor*> ignored;
 	TArray<FHitResult> result;
-	UKismetSystemLibrary::SphereTraceMulti(GetWorld(), GetActorLocation(), GetActorLocation() * Range, 360.f, UEngineTypes::ConvertToTraceType(ECC_Pawn), false, ignored, EDrawDebugTrace::ForDuration, result, true);
+	UKismetSystemLibrary::SphereTraceMulti(GetWorld(), GetActorLocation(), GetActorLocation() * 5.f, 360.f, UEngineTypes::ConvertToTraceType(ECC_Pawn), false, ignored, EDrawDebugTrace::ForDuration, result, true);
 	for (size_t i = 0; i < result.Num(); i++) {
 		ABaseEnemy* target = Cast<ABaseEnemy>(result[i].GetActor());
 		if (IsValid(target)) {
 			FocusedTarget = target;
-			GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Yellow, TEXT("Target Focused"));
 			bFocusing = !bFocusing;
 			bUseControllerRotationYaw = bFocusing;
 			GetCharacterMovement()->bOrientRotationToMovement = !bFocusing;

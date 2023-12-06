@@ -65,7 +65,7 @@ void AControlledCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 		//Dodge
 		EnhancedInputComponent->BindAction(DodgeAction, ETriggerEvent::Triggered, this, &AControlledCharacter::DodgeRoll);
 		//Lock on
-		EnhancedInputComponent->BindAction(LockOnAction, ETriggerEvent::Triggered, this, &AControlledCharacter::FocusEnemy);
+		EnhancedInputComponent->BindAction(LockOnAction, ETriggerEvent::Completed, this, &AControlledCharacter::FocusEnemy);
 	}
 }
 

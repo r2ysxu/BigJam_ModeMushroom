@@ -34,7 +34,7 @@ bool UDirectionalAttackComponent::IsAttackChainable(EAttackType CurrentAttack) {
 
 void UDirectionalAttackComponent::InitiateAttack(EAttackType AttackType) {
 	if (AttackType != EAttackType::VE_L) return;
-	if (IsAttackChainable(AttackType) && !Owner->GetIsDodging() && bAttackWindowOpen) {
+	if (IsAttackChainable(AttackType) && !Owner->GetIsDodging() && bAttackWindowOpen && Owner->DrainStamina(StaminaDrainPerAttack)) {
 		bAttacking = true;
 		bAttackWindowOpen = false;
 		GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Yellow, FString::Printf(TEXT("%d"), LastMovement));

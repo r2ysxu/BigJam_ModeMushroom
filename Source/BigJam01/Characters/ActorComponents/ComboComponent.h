@@ -39,6 +39,8 @@ class BIGJAM01_API UComboComponent : public UActorComponent {
 	GENERATED_BODY()
 
 private:
+	const float StaminaDrainPerAttack = .20f;
+
 	class AMainCharacter* Owner;
 	class AMeleeWeapon* Weapon;
 	FTimerHandle OnAttackHandler;
@@ -47,7 +49,6 @@ private:
 	volatile bool bCanApplyDamage = false;
 	volatile bool bAttackWindowOpen = true;
 	volatile bool bAttackWindowMissed = false;
-	float Stamina = 100.f;
 
 	struct FAttackComboNode* ComboNode;
 	class ABaseCharacter* LastHitEnemy;
