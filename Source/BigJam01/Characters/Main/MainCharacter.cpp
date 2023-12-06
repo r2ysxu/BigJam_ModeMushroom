@@ -13,6 +13,8 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "Blueprint/UserWidget.h"
+#include "Kismet/KismetSystemLibrary.h"
+#include "Kismet/KismetMathLibrary.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -52,6 +54,11 @@ AMainCharacter::AMainCharacter() {
 }
 
 void AMainCharacter::Tick(float DeltaTime) {
+	if (bFocusing && FocusedTarget) {
+		FRotator rotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), FocusedTarget->GetActorLocation());
+		GetController()->SetControlRotation(FMath::RInterpTo(GetActorRotation(), rotation, DeltaTime, 2.f));
+		//SetActorRotation(FMath::RInterpTo(GetActorRotation(), rotation, DeltaTime, 2.f));
+	}
 }
 
 UComboComponent* AMainCharacter::GetComboComponent() {
@@ -199,7 +206,23 @@ void AMainCharacter::DodgeRoll() {
 	}
 }
 
-void AMainCharacter::FocusEnemy() {}
+void AMainCharacter::FocusEnemy() {
+	float Range = 500.f;
+	const TArray<AActor*> ignored;
+	TArray<FHitResult> result;
+	UKismetSystemLibrary::SphereTraceMulti(GetWorld(), GetActorLocation(), GetActorLocation() * Range, 360.f, UEngineTypes::ConvertToTraceType(ECC_Pawn), false, ignored, EDrawDebugTrace::ForDuration, result, true);
+	for (size_t i = 0; i < result.Num(); i++) {
+		ABaseEnemy* target = Cast<ABaseEnemy>(result[i].GetActor());
+		if (IsValid(target)) {
+			FocusedTarget = target;
+			GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Yellow, TEXT("Target Focused"));
+			bFocusing = !bFocusing;
+			bUseControllerRotationYaw = bFocusing;
+			GetCharacterMovement()->bOrientRotationToMovement = !bFocusing;
+			break;
+		}
+	}
+}
 
 void AMainCharacter::EquipWeapon(uint32 WeaponIndex) {
 	if (AvailableWeapons.IsValidIndex(WeaponIndex)) {

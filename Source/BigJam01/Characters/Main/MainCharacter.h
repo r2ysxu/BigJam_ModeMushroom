@@ -42,9 +42,12 @@ protected:
 
 	volatile bool bAttackLHeld = false;
 	volatile bool bAttackRHeld = false;
+
+	volatile bool bFocusing = false;
 	
 	uint32 EquipedWeaponIndex = 0;
 	TArray<class AMeleeWeapon*> AvailableWeapons;
+	class ABaseEnemy* FocusedTarget = nullptr;
 
 	UPROPERTY(EditAnywhere, BLueprintReadWrite, Category = "Weapons")
 	TArray<FSpawnMeleeWeapon> EquippableWeaponClasses;
