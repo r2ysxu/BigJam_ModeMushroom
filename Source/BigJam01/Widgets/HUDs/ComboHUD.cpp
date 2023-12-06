@@ -4,12 +4,12 @@
 #include "ComboHUD.h"
 
 void UComboHUD::IncrementTime() {
-	TimingProgress = FMath::Min(TimingTotal, TimingProgress + TIME_INCREMENT) / TimingTotal;
+	TimingProgress = FMath::Min(1.f, TimingProgress + TIME_INCREMENT / TimingTotal);
 }
 
 void UComboHUD::PlayTimer() {
-	SetVisibility(ESlateVisibility::Visible);
 	StopHideTransition();
+	SetVisibility(ESlateVisibility::Visible);
 	TimingProgress = 0;
 	GetWorld()->GetTimerManager().SetTimer(TimingHandle, this, &UComboHUD::IncrementTime, TIME_INCREMENT, true);
 }

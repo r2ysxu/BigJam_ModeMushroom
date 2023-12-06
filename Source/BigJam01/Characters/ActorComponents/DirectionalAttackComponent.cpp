@@ -16,7 +16,7 @@ void UDirectionalAttackComponent::BeginPlay() {
 }
 
 void UDirectionalAttackComponent::SetDirectionalMovement(FVector2D MovementVector) {
-	if (bAttacking) return;
+	//if (bAttacking) return;
 	if (FMath::Abs(MovementVector.Y) > FMath::Abs(MovementVector.X)) {
 		LastMovement = EAttackSwingDirection::VE_F;
 	} else if (MovementVector.X < 0) {
@@ -33,6 +33,7 @@ bool UDirectionalAttackComponent::IsAttackChainable(EAttackType CurrentAttack) {
 }
 
 void UDirectionalAttackComponent::InitiateAttack(EAttackType AttackType) {
+	if (AttackType != EAttackType::VE_L) return;
 	if (IsAttackChainable(AttackType) && !Owner->GetIsDodging() && bAttackWindowOpen) {
 		bAttacking = true;
 		bAttackWindowOpen = false;

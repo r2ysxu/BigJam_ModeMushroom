@@ -30,4 +30,5 @@ protected:
 	UFUNCTION(BlueprintCallable) void ResetCombo();
 	UFUNCTION(BlueprintCallable) void DodgeWindowOpen();
 	UFUNCTION(BlueprintCallable) void DodgeWindowClosed();
+	UFUNCTION(BlueprintCallable) bool ChargedUp();
 };

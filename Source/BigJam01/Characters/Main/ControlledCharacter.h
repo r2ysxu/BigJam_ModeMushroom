@@ -54,8 +54,6 @@ private:
 	const float CAMERA_SCROLL_SPEED = 5.f;
 
 protected:
-	bool bAttackLHeld = false;
-	bool bAttackRHeld = false;
 
 	virtual void BeginPlay() override;
 	void Jump();

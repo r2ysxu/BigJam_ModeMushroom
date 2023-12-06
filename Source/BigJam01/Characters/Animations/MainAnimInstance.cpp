@@ -42,3 +42,7 @@ void UMainAnimInstance::DodgeWindowClosed() {
 	Owner->SetDodgeWindow(false);
 }
 
+bool UMainAnimInstance::ChargedUp() {
+	return Owner->HasCharged();
+}
+

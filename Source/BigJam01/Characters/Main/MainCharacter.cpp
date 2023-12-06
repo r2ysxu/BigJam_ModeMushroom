@@ -3,6 +3,7 @@
 #include "MainCharacter.h"
 #include "../ActorComponents/ComboComponent.h"
 #include "../ActorComponents/DirectionalAttackComponent.h"
+#include "../ActorComponents/ChargeAttackComponent.h"
 #include "../../Weapons/Melee/MeleeWeapon.h"
 #include "../Enemy/BaseEnemy.h"
 #include "../../Widgets/HUDs/ComboHUD.h"
@@ -45,8 +46,9 @@ AMainCharacter::AMainCharacter() {
 
 	GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
-	ComboComponet = CreateDefaultSubobject<UComboComponent>(TEXT("ComboComponent"));
+	ComboComponet = CreateDefaultSubobject<UComboComponent>(TEXT("ComboAttackComponent"));
 	DaoComponet = CreateDefaultSubobject<UDirectionalAttackComponent>(TEXT("DirectionalAttackComponent"));
+	ChargeComponent = CreateDefaultSubobject<UChargeAttackComponent>(TEXT("ChargeAttackComponent"));
 }
 
 void AMainCharacter::Tick(float DeltaTime) {
@@ -97,6 +99,7 @@ void AMainCharacter::SetupHUDs() {
 	ComboHud = CreateWidget<UComboHUD>(GetWorld(), ComboHudClass);
 	if (ComboHud) {
 		ComboHud->AddToViewport();
+		ComboHud->SetVisibility(ESlateVisibility::Hidden);
 	}
 }
 
@@ -118,7 +121,10 @@ void AMainCharacter::InitiateAttack(EAttackType AttackType) {
 	if (CanMoveAndAttack()) {
 		switch (EquipedWeaponIndex) {
 		case 0: ComboComponet->InitiateAttack(AttackType); break;
-		case 1: DaoComponet->InitiateAttack(AttackType); break;
+		case 1: 
+			DaoComponet->InitiateAttack(AttackType);
+			ChargeComponent->InitiateAttack(AttackType);
+			break;
 		}
 	}
 }
@@ -160,6 +166,10 @@ void AMainCharacter::SetIsAttacking(bool IsAttacking) {
 AMeleeWeapon* AMainCharacter::GetEquippedWeapon() {
 	if (!AvailableWeapons.IsValidIndex(EquipedWeaponIndex)) return nullptr;
 	else return AvailableWeapons[EquipedWeaponIndex];
+}
+
+bool AMainCharacter::HasCharged() {
+	return ChargeComponent->OnChargedUp();
 }
 
 void AMainCharacter::OnHitByOpponent() {

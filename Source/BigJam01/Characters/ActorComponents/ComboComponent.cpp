@@ -49,6 +49,7 @@ void UComboComponent::OnAttackStop() {
 }
 
 void UComboComponent::OnNextCombo() {
+	Owner->SetIsAttacking(false);
 	SetAttackWindow(true);
 }
 

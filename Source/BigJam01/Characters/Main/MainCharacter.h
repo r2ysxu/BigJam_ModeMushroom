@@ -39,6 +39,9 @@ protected:
 	volatile bool bRollWindowOpen = true;
 	volatile bool bRolling = false;
 	volatile bool bFlinching = false;
+
+	volatile bool bAttackLHeld = false;
+	volatile bool bAttackRHeld = false;
 	
 	uint32 EquipedWeaponIndex = 0;
 	TArray<class AMeleeWeapon*> AvailableWeapons;
@@ -49,6 +52,8 @@ protected:
 	class UComboComponent* ComboComponet;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapons")
 	class UDirectionalAttackComponent* DaoComponet;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapons")
+	class UChargeAttackComponent* ChargeComponent;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
 	class UAnimMontage* DodgeMontage;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
@@ -91,6 +96,8 @@ public:
 	FORCEINLINE bool GetIsAttacking() { return bAttacking; }
 	FORCEINLINE virtual uint8 GetTeam() override { return 1; }
 	FORCEINLINE bool GetIsDodging() { return bRolling; }
+	FORCEINLINE bool GetIsCharging() { return bAttackRHeld; }
+	bool HasCharged();
 	UFUNCTION(BlueprintCallable) void OnHitByOpponent();
 	UFUNCTION(BlueprintCallable) class UComboComponent* GetComboComponent();
 	class UComboHUD* GetComboHud();
