@@ -6,6 +6,7 @@
 
 #include "Components/BoxComponent.h"
 #include "Components/SphereComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
@@ -23,9 +24,19 @@ AMeleeEnemy::AMeleeEnemy() {
 	MeleeDetectionComponent->bHiddenInGame = false;
 
 	MeleeWeaponBox = CreateDefaultSubobject<UBoxComponent>(TEXT("MeleeWeaponBox"));
-	MeleeWeaponBox->SetBoxExtent(FVector(5.f, 5.f, 50.f));
-	MeleeWeaponBox->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, WeaponSocketL);
-	MeleeWeaponBox->bHiddenInGame = false;
+	MeleeWeaponBox->SetBoxExtent(FVector(30.f, 30.f, 30.f));
+	MeleeWeaponBox->SetupAttachment(GetMesh(), WeaponSocket);
+	//MeleeWeaponBox->bHiddenInGame = false;
+}
+
+bool AMeleeEnemy::CheckAlive() {
+	if (Health <= 0) {
+		GetMesh()->SetCollisionProfileName(FName("Ragdoll"));
+		GetMesh()->SetSimulatePhysics(true);
+		GetMovementComponent()->Deactivate();
+		GetCapsuleComponent()->DestroyComponent();
+	}
+	return Super::CheckAlive();
 }
 
 // Called when the game starts or when spawned
@@ -91,7 +102,7 @@ void AMeleeEnemy::OnWeaponMeleeHit(UPrimitiveComponent* OverlappedComponent, AAc
 	if (actor == this || !bAttacking || !bAttackSwing) return;
 	AMainCharacter* mc = Cast<AMainCharacter>(actor);
 	if (IsValid(mc)) {
-		mc->OnHitByOpponent();
+		mc->OnHitByOpponent(10.f, EComboDebuffType::VE_NONE);
 		GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Yellow, TEXT("Hit"));
 		bAttackSwing = false;
 	}
@@ -103,7 +114,8 @@ void AMeleeEnemy::ClearAttacks() {
 	GetWorld()->GetTimerManager().ClearTimer(SingleAttackHandler);
 }
 
-void AMeleeEnemy::OnHitByOpponent() {
+
+void AMeleeEnemy::OnHitByOpponent(float Damage, EComboDebuffType Status) {
 	ClearAttacks();
 	if (FlinchMontage) {
 		float animationDelay = PlayAnimMontage(FlinchMontage);

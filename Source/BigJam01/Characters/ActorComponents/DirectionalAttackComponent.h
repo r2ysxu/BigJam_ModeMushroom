@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "ComboComponent.h"
+#include "BaseAttackComponent.h"
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
@@ -16,17 +16,13 @@ enum class EAttackSwingDirection : uint8 {
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class BIGJAM01_API UDirectionalAttackComponent : public UActorComponent {
+class BIGJAM01_API UDirectionalAttackComponent : public UBaseAttackComponent {
 	GENERATED_BODY()
 
 private:
 	const float StaminaDrainPerAttack = .20f;
 
-	class AMainCharacter* Owner;
 	int CurrentAttackIndex = 0;
-	bool bAttacking = false;
-
-	FTimerHandle OnAttackHandler;
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)

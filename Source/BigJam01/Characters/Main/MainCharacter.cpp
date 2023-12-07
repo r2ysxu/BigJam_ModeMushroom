@@ -81,11 +81,12 @@ void AMainCharacter::SetDodgeWindow(bool IsOpen) {
 	bRollWindowOpen = IsOpen;
 }
 
-bool AMainCharacter::OnHitTarget(ABaseCharacter* Target) {
+bool AMainCharacter::OnHitTarget(ABaseCharacter* Target, float Damage, EComboDebuffType Status) {
 	if (!bAttacking) return false;
-	if (IsValid(Target) && !ComboComponet->IsLastHitEnemy(Target)) {
-		Target->OnHitByOpponent();
-		ComboComponet->MarkLastHitEnemy(Target);
+	if (IsValid(Target) && !IsLastHitEnemy(Target)) {
+		Target->OnHitByOpponent(Damage, Status);
+		Target->CheckAlive();
+		MarkLastHitEnemy(Target);
 		return true;
 	}
 	return false;
@@ -134,6 +135,18 @@ void AMainCharacter::OnStaminaRegen() {
 	if (!bAttacking && !GetIsDodging()) {
 		Stamina = FMath::Min(1.f, StaminaRegenRate + Stamina);
 	}
+}
+
+void AMainCharacter::MarkLastHitEnemy(ABaseCharacter* Enemy) {
+	LastHitEnemy = Enemy;
+}
+
+void AMainCharacter::ClearLastHitEnemy() {
+	LastHitEnemy = nullptr;
+}
+
+bool AMainCharacter::IsLastHitEnemy(ABaseCharacter* Enemy) {
+	return LastHitEnemy == Enemy;
 }
 
 void AMainCharacter::InitiateAttack(EAttackType AttackType) {
@@ -201,11 +214,12 @@ bool AMainCharacter::DrainStamina(float Value) {
 	return true;
 }
 
-void AMainCharacter::OnHitByOpponent() {
+void AMainCharacter::OnHitByOpponent(float Damage, EComboDebuffType Status) {
 	if (FlinchMontage) {
 		GetMovementComponent()->StopActiveMovement();
 		float animationDelay = PlayAnimMontage(FlinchMontage);
 		GetWorld()->GetTimerManager().SetTimer(OnFlinchHandler, this, &AMainCharacter::OnFlinchStop, animationDelay, false);
+		Health -= Damage;
 	}
 }
 

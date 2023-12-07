@@ -35,7 +35,6 @@ bool UDirectionalAttackComponent::IsAttackChainable(EAttackType CurrentAttack) {
 void UDirectionalAttackComponent::InitiateAttack(EAttackType AttackType) {
 	if (AttackType != EAttackType::VE_L) return;
 	if (IsAttackChainable(AttackType) && !Owner->GetIsDodging() && bAttackWindowOpen && Owner->DrainStamina(StaminaDrainPerAttack)) {
-		bAttacking = true;
 		bAttackWindowOpen = false;
 		GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Yellow, FString::Printf(TEXT("%d"), LastMovement));
 		UAnimMontage* montage;
@@ -57,6 +56,7 @@ void UDirectionalAttackComponent::InitiateAttack(EAttackType AttackType) {
 		if (IsValid(montage)) {
 			Owner->SetIsAttacking(true);
 			Owner->SetDodgeWindow(false);
+			ApplyStatusToWeapon(EComboDebuffType::VE_HEAVY);
 			float animationDelay = Owner->PlayAnimMontage(montage);
 			GetWorld()->GetTimerManager().SetTimer(OnAttackHandler, this, &UDirectionalAttackComponent::OnAttackStop, animationDelay, false);
 		}
@@ -74,13 +74,13 @@ void UDirectionalAttackComponent::OnNextCombo() {
 void UDirectionalAttackComponent::OnComboReset() {
 	SetAttackWindow(false);
 	CurrentAttackIndex = 0;
+	Owner->ClearLastHitEnemy();
 	GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Emerald, TEXT("ResetCombo"));
 }
 
 void UDirectionalAttackComponent::OnAttackStop() {
 	OnComboReset();
 	SetAttackWindow(true);
-	bAttacking = false;
 	Owner->SetIsAttacking(false);
 	Owner->SetDodgeWindow(true);
 }

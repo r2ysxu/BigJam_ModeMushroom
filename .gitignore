@@ -5,6 +5,7 @@ Config
 Content/*
 !Content/Main
 Content/Main/Characters/MainCharacter/Mesh
+Content/Main/Characters/HornetEnemy/Mesh
 Content/Main/Mesh
 Content/Main/Sounds
 DerivedDataCache

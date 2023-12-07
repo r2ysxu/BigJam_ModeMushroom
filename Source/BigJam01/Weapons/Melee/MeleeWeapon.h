@@ -13,7 +13,6 @@ USTRUCT(BlueprintType)
 struct FSpawnMeleeWeapon {
 	GENERATED_BODY()
 
-public:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class AMeleeWeapon> WeaponClass;
 	UPROPERTY(EditAnywhere)
@@ -29,11 +28,15 @@ protected:
 	class UStaticMeshComponent* WeaponMeshComponent;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UBoxComponent* MeleeWeaponBox;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	float BaseDamage = 0.01f;
 	class ABaseEnemy* LastHitEnemy = nullptr;
+
+	EComboDebuffType CurrentEffect;
 
 	virtual void BeginPlay() override;
 
-	UFUNCTION() void OnWeaponMeleeHit(UPrimitiveComponent* OverlappedComponent, AActor* actor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	UFUNCTION()	void OnWeaponMeleeHit(UPrimitiveComponent* OverlappedComponent, AActor* actor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 public:	
 	AMeleeWeapon();

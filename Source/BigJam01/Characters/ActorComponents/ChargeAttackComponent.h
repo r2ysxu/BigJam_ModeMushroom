@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "ComboComponent.h"
+#include "BaseAttackComponent.h"
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
@@ -10,7 +10,7 @@
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class BIGJAM01_API UChargeAttackComponent : public UActorComponent {
+class BIGJAM01_API UChargeAttackComponent : public UBaseAttackComponent {
 	GENERATED_BODY()
 
 private:
@@ -20,7 +20,6 @@ protected:
 	const float StaminaDrainPerAttack = 0.25f;
 
 	FTimerHandle OnChargeUpHandle;
-	FTimerHandle OnAttackHandler;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
 	TArray<class UAnimMontage*> AttackMontages;

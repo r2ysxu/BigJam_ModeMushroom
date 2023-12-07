@@ -12,6 +12,7 @@ class BIGJAM01_API ABaseCharacter : public ACharacter {
 
 protected:
 	bool bAttacking = false;
+	enum EComboDebuffType DebuffStatus;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Stats")
 	float Health = 1.f;
@@ -22,8 +23,10 @@ protected:
 public:
 	ABaseCharacter();
 
-	virtual bool OnHitTarget(class ABaseCharacter* Target);
-	virtual void OnHitByOpponent() {}
+	virtual bool CheckAlive();
+	virtual bool OnHitTarget(class ABaseCharacter* Target, float Damage, enum EComboDebuffType Status);
+	virtual void OnHitByOpponent(float Damage, enum EComboDebuffType Status) {}
+	FORCEINLINE EComboDebuffType GetCurrentDebuff();
 	FORCEINLINE virtual uint8 GetTeam() { return 0; }
 	FORCEINLINE virtual bool GetIsAttacking() { return bAttacking; }
 };

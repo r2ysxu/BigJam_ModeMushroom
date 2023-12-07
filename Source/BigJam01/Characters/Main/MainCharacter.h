@@ -4,7 +4,7 @@
 
 #include "../BaseCharacter.h"
 #include "../../Weapons/Melee/MeleeWeapon.h"
-#include "../ActorComponents/ComboComponent.h"
+#include "../ActorComponents/BaseAttackComponent.h"
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
@@ -49,6 +49,7 @@ protected:
 	uint32 EquipedWeaponIndex = 0;
 	TArray<class AMeleeWeapon*> AvailableWeapons;
 	class ABaseEnemy* FocusedTarget = nullptr;
+	class ABaseCharacter* LastHitEnemy;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Stats")
 	float Stamina = 1.f;
@@ -98,21 +99,24 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	void SetDodgeWindow(bool IsOpen);
-	virtual bool OnHitTarget(class ABaseCharacter* Target);
+	virtual bool OnHitTarget(class ABaseCharacter* Target, float Damage, enum EComboDebuffType Status) override;
+	virtual void OnHitByOpponent(float Damage, enum EComboDebuffType Status) override;
 	
 	void SetIsAttacking(bool IsAttacking);
 	class AMeleeWeapon* GetEquippedWeapon();
 	void OnNextCombo();
 	void OnComboReset();
 	void OnStaminaRegen();
+	void MarkLastHitEnemy(class ABaseCharacter* Enemy);
+	void ClearLastHitEnemy();
+	bool IsLastHitEnemy(class ABaseCharacter* Enemy);
+	bool HasCharged();
 	FORCEINLINE bool GetIsAttacking() { return bAttacking; }
 	FORCEINLINE virtual uint8 GetTeam() override { return 1; }
 	FORCEINLINE bool GetIsDodging() { return bRolling; }
 	FORCEINLINE bool GetIsCharging() { return bAttackRHeld; }
 	FORCEINLINE UFUNCTION(BlueprintCallable) float GetStamina();
-	bool HasCharged();
 	UFUNCTION(BlueprintCallable) bool DrainStamina(float Value);
-	UFUNCTION(BlueprintCallable) void OnHitByOpponent();
 	UFUNCTION(BlueprintCallable) class UComboComponent* GetComboComponent();
 	class UComboHUD* GetComboHud();
 

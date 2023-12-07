@@ -2,7 +2,6 @@
 
 
 #include "ChargeAttackComponent.h"
-#include "ComboComponent.h"
 #include "../Main/MainCharacter.h"
 
 #include "Components/ActorComponent.h"
@@ -25,6 +24,7 @@ bool UChargeAttackComponent::IsAttackChainable(EAttackType CurrentAttack) {
 void UChargeAttackComponent::InitiateAttack(EAttackType AttackType) {
 	if (AttackType != EAttackType::VE_R) return;
 	if (IsAttackChainable(AttackType) && !Owner->GetIsDodging() && bAttackWindowOpen && Owner->DrainStamina(StaminaDrainPerAttack)) {
+		ApplyStatusToWeapon(EComboDebuffType::VE_CHARGE);
 		float animationDelay = Owner->PlayAnimMontage(AttackMontages[ComboChain]);
 		GetWorld()->GetTimerManager().SetTimer(OnAttackHandler, this, &UChargeAttackComponent::OnAttackStop, animationDelay, false);
 		ComboChain++;
@@ -48,6 +48,7 @@ void UChargeAttackComponent::OnNextCombo() {
 void UChargeAttackComponent::OnComboReset() {
 	SetAttackWindow(false);
 	ComboChain = 0;
+	Owner->ClearLastHitEnemy();
 	GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Emerald, TEXT("ResetCombo"));
 }
 

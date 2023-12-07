@@ -15,10 +15,14 @@ class BIGJAM01_API ABaseEnemy : public ABaseCharacter {
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	
+	void ApplyDebuff(enum EComboDebuffType Status);
+	float CalculateDamage(float BaseDamage, enum EComboDebuffType Status);
 
 public:	
 	ABaseEnemy();
 
-	virtual void OnHitByOpponent() override {};
+	virtual bool CheckAlive() override;
+	virtual void OnHitByOpponent(float Damage, enum EComboDebuffType Status) override;
 	FORCEINLINE virtual uint8 GetTeam() { return 2; }
 };

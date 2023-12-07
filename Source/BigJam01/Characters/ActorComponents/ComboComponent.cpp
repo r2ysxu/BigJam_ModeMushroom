@@ -3,7 +3,6 @@
 
 #include "ComboComponent.h"
 #include "../Main/MainCharacter.h"
-#include "../../Weapons/Melee/MeleeWeapon.h"
 #include "../../Widgets/HUDs/ComboHUD.h"
 
 #include "Components/ActorComponent.h"
@@ -14,7 +13,6 @@ UComboComponent::UComboComponent() {
 	PrimaryComponentTick.bCanEverTick = false;
 	ConstructCombos();
 	ComboNode = ComboChains;
-	LastHitEnemy = nullptr;
 }
 
 void UComboComponent::InitiateAttack(EAttackType AttackType) {
@@ -27,8 +25,8 @@ void UComboComponent::InitiateAttack(EAttackType AttackType) {
 			bAttackWindowOpen = false;
 			Owner->SetIsAttacking(true);
 			Owner->SetDodgeWindow(false);
+			ApplyStatusToWeapon(ComboNode->Debuff);
 			ComboChain++;
-			ApplyStatusToWeapon();
 			float animationDelay = Owner->PlayAnimMontage(AttackMontages[(uint8)AttackType]);
 			GetWorld()->GetTimerManager().SetTimer(OnAttackHandler, this, &UComboComponent::OnAttackStop, animationDelay, false);
 			if (ComboNode->Debuff == EComboDebuffType::VE_NONE) {
@@ -46,6 +44,7 @@ void UComboComponent::OnAttackStop() {
 	bCanApplyDamage = false;
 	Owner->SetIsAttacking(false);
 	Owner->SetDodgeWindow(true);
+	Owner->ClearLastHitEnemy();
 }
 
 void UComboComponent::OnNextCombo() {
@@ -57,22 +56,14 @@ void UComboComponent::OnComboReset() {
 	SetAttackWindow(false);
 	ComboChain = 0;
 	ComboNode = ComboChains;
-	LastHitEnemy = nullptr;
 	bAttackWindowMissed = false;
+	Owner->ClearLastHitEnemy();
 	ClearHUD();
 	GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Emerald, TEXT("ResetCombo"));
 }
 
 void UComboComponent::SetAttackWindow(bool IsOpen) {
 	bAttackWindowOpen = IsOpen;
-}
-
-void UComboComponent::MarkLastHitEnemy(ABaseCharacter* Enemy) {
-	LastHitEnemy = Enemy;
-}
-
-bool UComboComponent::IsLastHitEnemy(ABaseCharacter* Enemy) {
-	return LastHitEnemy == Enemy;
 }
 
 void UComboComponent::UpdateHUDs(UAnimMontage* AnimMontage, float AnimTime) {
@@ -128,10 +119,4 @@ bool UComboComponent::IsAttackChainable(EAttackType CurrentAttack) {
 
 void UComboComponent::SetWeapon(AMeleeWeapon* EquippedWeapon) {
 	Weapon = EquippedWeapon;
-}
-
-void UComboComponent::ApplyStatusToWeapon() {
-	if (IsValid(Weapon)) {
-		Weapon->ApplyDebuffEnhancement(ComboNode->Debuff);
-	}
 }

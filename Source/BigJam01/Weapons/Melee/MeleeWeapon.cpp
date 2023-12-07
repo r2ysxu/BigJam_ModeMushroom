@@ -26,7 +26,9 @@ AMeleeWeapon::AMeleeWeapon() {
 	//MeleeWeaponBox->bHiddenInGame = false;
 }
 
-void AMeleeWeapon::ApplyDebuffEnhancement(EComboDebuffType DebuffType) {}
+void AMeleeWeapon::ApplyDebuffEnhancement(EComboDebuffType DebuffType) {
+	CurrentEffect = DebuffType;
+}
 
 // Called when the game starts or when spawned
 void AMeleeWeapon::BeginPlay() {
@@ -36,6 +38,5 @@ void AMeleeWeapon::BeginPlay() {
 
 void AMeleeWeapon::OnWeaponMeleeHit(UPrimitiveComponent* OverlappedComponent, AActor* actor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult) {
 	if (actor == this || actor == Owner) return;
-	Owner->OnHitTarget(Cast<class ABaseCharacter>(actor));
+	Owner->OnHitTarget(Cast<class ABaseCharacter>(actor), BaseDamage, CurrentEffect);
 }
-

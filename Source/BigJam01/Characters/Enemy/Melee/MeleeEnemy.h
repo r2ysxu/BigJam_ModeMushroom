@@ -31,8 +31,7 @@ class BIGJAM01_API AMeleeEnemy : public ABaseEnemy {
 private:
 	const float ATTACK_DELAY = 2.f;
 	const float INITIAL_ATTACK_DELAY = 1.f;
-	const FName WeaponSocketL = FName("hand_l");
-	const FName WeaponSocketR = FName("hand_r");
+	const FName WeaponSocket = FName("weapon");
 
 	FTimerHandle InitiateAttackHandler;
 	FTimerHandle SingleAttackHandler;
@@ -55,7 +54,7 @@ protected:
 	class UAnimMontage* FlinchMontage;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack")
 	TArray<FAttackChain> AttackChains;
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack")
 	class UBoxComponent* MeleeWeaponBox;
 
 	UFUNCTION() void OnWithinMeleeRange(UPrimitiveComponent* OverlappedComponent, AActor* actor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
@@ -70,6 +69,7 @@ protected:
 public:
 	AMeleeEnemy();
 
+	virtual bool CheckAlive() override;
 	UFUNCTION(BlueprintCallable) bool GetIsAttacking() { return bAttacking; }
-	virtual void OnHitByOpponent() override;
+	virtual void OnHitByOpponent(float Damage, enum EComboDebuffType Status) override;
 };
