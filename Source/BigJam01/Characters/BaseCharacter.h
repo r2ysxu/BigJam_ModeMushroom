@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "ActorComponents/BaseAttackComponent.h"
 #include "BaseCharacter.generated.h"
 
 UCLASS(Abstract)
@@ -12,7 +13,9 @@ class BIGJAM01_API ABaseCharacter : public ACharacter {
 
 protected:
 	bool bAttacking = false;
-	enum EComboDebuffType DebuffStatus;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
+	EComboDebuffType DebuffStatus;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Stats")
 	float Health = 1.f;
