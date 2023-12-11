@@ -4,6 +4,8 @@ Binaries
 Config
 Content/*
 !Content/Main
+!Content/Levels
+!Content/EasyBuildingSystem
 DerivedDataCache
 Intermediate
 Platforms
