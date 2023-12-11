@@ -6,6 +6,7 @@ Content/*
 !Content/Main
 !Content/Levels
 !Content/EasyBuildingSystem
+!Content/PostProcess
 DerivedDataCache
 Intermediate
 Platforms
