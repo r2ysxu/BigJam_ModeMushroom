@@ -3,6 +3,7 @@
 
 #include "BaseCharacter.h"
 #include "ActorComponents/BaseAttackComponent.h"
+#include "ActorComponents/DebuffComponent.h"
 
 // Sets default values
 ABaseCharacter::ABaseCharacter() {
@@ -13,11 +14,7 @@ bool ABaseCharacter::CheckAlive() {
 	return Health >= 0;
 }
 
-bool ABaseCharacter::OnHitTarget(ABaseCharacter* Target, float Damage, EComboDebuffType Status) { return false; }
-
-EComboDebuffType ABaseCharacter::GetCurrentDebuff() {
-	return DebuffStatus;
-}
+bool ABaseCharacter::OnHitTarget(ABaseCharacter* Target, float Damage, EStatusDebuffType Status) { return false; }
 
 // Called when the game starts or when spawned
 void ABaseCharacter::BeginPlay() {

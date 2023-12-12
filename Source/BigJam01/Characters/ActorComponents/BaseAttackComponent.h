@@ -13,14 +13,11 @@ enum class EAttackType : uint8 {
 };
 
 UENUM(BlueprintType)
-enum class EComboDebuffType : uint8 {
+enum class EStatusDebuffType : uint8 {
 	VE_NONE		 UMETA(DisplayName = "None"),
-	VE_HEAVY	 UMETA(DisplayName = "Heavy"),
-	VE_POISON	 UMETA(DisplayName = "Poison"),
-	VE_SUNDER	 UMETA(DisplayName = "Sunder"),
-	VE_SLEEP	 UMETA(DisplayName = "Sleep"),
-	VE_BURST	 UMETA(DisplayName = "Burst"),
-	VE_CHARGE	 UMETA(DisplayName = "Charge"),
+	VE_POISON    UMETA(DisplayName = "Poison"),
+	VE_TOXIN     UMETA(DispalyName = "Toxin"),
+	VE_ZMD       UMETA(DisplayName = "ZMD")
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -38,5 +35,5 @@ protected:
 public:
 	UBaseAttackComponent();
 	
-	virtual void ApplyStatusToWeapon(EComboDebuffType Debuff);
+	virtual void ApplyStatusToWeapon(EStatusDebuffType Debuff);
 };

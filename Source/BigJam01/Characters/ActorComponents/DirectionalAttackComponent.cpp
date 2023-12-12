@@ -56,7 +56,7 @@ void UDirectionalAttackComponent::InitiateAttack(EAttackType AttackType) {
 		if (IsValid(montage)) {
 			Owner->SetIsAttacking(true);
 			Owner->SetDodgeWindow(false);
-			ApplyStatusToWeapon(EComboDebuffType::VE_HEAVY);
+			ApplyStatusToWeapon(EStatusDebuffType::VE_ZMD);
 			float animationDelay = Owner->PlayAnimMontage(montage);
 			GetWorld()->GetTimerManager().SetTimer(OnAttackHandler, this, &UDirectionalAttackComponent::OnAttackStop, animationDelay, false);
 		}
@@ -75,7 +75,6 @@ void UDirectionalAttackComponent::OnComboReset() {
 	SetAttackWindow(false);
 	CurrentAttackIndex = 0;
 	Owner->ClearLastHitEnemy();
-	GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Emerald, TEXT("ResetCombo"));
 }
 
 void UDirectionalAttackComponent::OnAttackStop() {

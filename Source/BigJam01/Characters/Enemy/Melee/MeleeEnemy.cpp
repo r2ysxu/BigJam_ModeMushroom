@@ -3,6 +3,7 @@
 
 #include "MeleeEnemy.h"
 #include "../../Main/MainCharacter.h"
+#include "../../ActorComponents/DebuffComponent.h"
 
 #include "Components/BoxComponent.h"
 #include "Components/SphereComponent.h"
@@ -27,6 +28,7 @@ AMeleeEnemy::AMeleeEnemy() {
 	MeleeWeaponBox->SetBoxExtent(FVector(30.f, 30.f, 30.f));
 	MeleeWeaponBox->SetupAttachment(GetMesh(), WeaponSocket);
 	//MeleeWeaponBox->bHiddenInGame = false;
+
 }
 
 bool AMeleeEnemy::CheckAlive() {
@@ -102,7 +104,7 @@ void AMeleeEnemy::OnWeaponMeleeHit(UPrimitiveComponent* OverlappedComponent, AAc
 	if (actor == this || !bAttacking || !bAttackSwing) return;
 	AMainCharacter* mc = Cast<AMainCharacter>(actor);
 	if (IsValid(mc)) {
-		mc->OnHitByOpponent(10.f, EComboDebuffType::VE_NONE);
+		mc->OnHitByOpponent(10.f, EStatusDebuffType::VE_NONE);
 		GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Yellow, TEXT("Hit"));
 		bAttackSwing = false;
 	}
@@ -115,11 +117,12 @@ void AMeleeEnemy::ClearAttacks() {
 }
 
 
-void AMeleeEnemy::OnHitByOpponent(float Damage, EComboDebuffType Status) {
+float AMeleeEnemy::OnHitByOpponent(float Damage, EStatusDebuffType Status) {
 	ClearAttacks();
 	if (FlinchMontage) {
 		float animationDelay = PlayAnimMontage(FlinchMontage);
 		GetWorld()->GetTimerManager().PauseTimer(InitiateAttackHandler);
 		GetWorld()->GetTimerManager().SetTimer(FlinchHandler, this, &AMeleeEnemy::OnFlinchRecover, animationDelay, false);
 	}
+	return Super::OnHitByOpponent(Damage, Status);
 }

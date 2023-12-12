@@ -9,7 +9,7 @@ UBaseAttackComponent::UBaseAttackComponent() {
 	PrimaryComponentTick.bCanEverTick = false;
 }
 
-void UBaseAttackComponent::ApplyStatusToWeapon(EComboDebuffType Debuff) {
+void UBaseAttackComponent::ApplyStatusToWeapon(EStatusDebuffType Debuff) {
 	if (IsValid(Weapon)) {
 		Weapon->ApplyDebuffEnhancement(Debuff);
 	}

@@ -12,10 +12,6 @@ USTRUCT(BlueprintType)
 struct FAttackComboNode {
 	GENERATED_BODY()
 
-	FAttackComboNode() : Debuff(EComboDebuffType::VE_NONE) {}
-	FAttackComboNode(EComboDebuffType StatusDebuff) : Debuff(StatusDebuff) {}
-
-	EComboDebuffType Debuff;
 	struct FAttackComboNode* L = nullptr;
 	struct FAttackComboNode* R = nullptr;
 };

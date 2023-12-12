@@ -96,8 +96,8 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	void SetDodgeWindow(bool IsOpen);
-	virtual bool OnHitTarget(class ABaseCharacter* Target, float Damage, enum EComboDebuffType Status) override;
-	virtual void OnHitByOpponent(float Damage, enum EComboDebuffType Status) override;
+	virtual bool OnHitTarget(class ABaseCharacter* Target, float Damage, enum EStatusDebuffType Status) override;
+	virtual float OnHitByOpponent(float Damage, enum EStatusDebuffType Status) override;
 	
 	void SetIsAttacking(bool IsAttacking);
 	class AMeleeWeapon* GetEquippedWeapon();

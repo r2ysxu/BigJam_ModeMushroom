@@ -15,7 +15,7 @@ protected:
 	bool bAttacking = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
-	EComboDebuffType DebuffStatus;
+	EStatusDebuffType DebuffStatus;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Stats")
 	float Health = 1.f;
@@ -27,9 +27,8 @@ public:
 	ABaseCharacter();
 
 	virtual bool CheckAlive();
-	virtual bool OnHitTarget(class ABaseCharacter* Target, float Damage, enum EComboDebuffType Status);
-	virtual void OnHitByOpponent(float Damage, enum EComboDebuffType Status) {}
-	FORCEINLINE EComboDebuffType GetCurrentDebuff();
+	virtual bool OnHitTarget(class ABaseCharacter* Target, float Damage, EStatusDebuffType Status);
+	virtual float OnHitByOpponent(float Damage, EStatusDebuffType Status) { return 0.f; }
 	FORCEINLINE virtual uint8 GetTeam() { return 0; }
 	FORCEINLINE virtual bool GetIsAttacking() { return bAttacking; }
 };

@@ -71,5 +71,5 @@ public:
 
 	virtual bool CheckAlive() override;
 	UFUNCTION(BlueprintCallable) bool GetIsAttacking() { return bAttacking; }
-	virtual void OnHitByOpponent(float Damage, enum EComboDebuffType Status) override;
+	virtual float OnHitByOpponent(float Damage, EStatusDebuffType Status) override;
 };

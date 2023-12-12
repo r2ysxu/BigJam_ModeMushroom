@@ -32,7 +32,7 @@ protected:
 	float BaseDamage = 0.01f;
 	class ABaseEnemy* LastHitEnemy = nullptr;
 
-	EComboDebuffType CurrentEffect;
+	EStatusDebuffType CurrentEffect;
 
 	virtual void BeginPlay() override;
 
@@ -41,5 +41,5 @@ protected:
 public:	
 	AMeleeWeapon();
 
-	void ApplyDebuffEnhancement(enum EComboDebuffType DebuffType);
+	void ApplyDebuffEnhancement(EStatusDebuffType DebuffType);
 };

@@ -77,10 +77,10 @@ void AMainCharacter::SetDodgeWindow(bool IsOpen) {
 	bRollWindowOpen = IsOpen;
 }
 
-bool AMainCharacter::OnHitTarget(ABaseCharacter* Target, float Damage, EComboDebuffType Status) {
+bool AMainCharacter::OnHitTarget(ABaseCharacter* Target, float Damage, EStatusDebuffType Status) {
 	if (!bAttacking) return false;
 	if (IsValid(Target) && !IsLastHitEnemy(Target)) {
-		Target->OnHitByOpponent(Damage, Status);
+		Health = FMath::Min(1.f, Health + Target->OnHitByOpponent(Damage, Status));
 		Target->CheckAlive();
 		MarkLastHitEnemy(Target);
 		return true;
@@ -205,13 +205,14 @@ bool AMainCharacter::DrainStamina(float Value) {
 	return true;
 }
 
-void AMainCharacter::OnHitByOpponent(float Damage, EComboDebuffType Status) {
+float AMainCharacter::OnHitByOpponent(float Damage, EStatusDebuffType Status) {
 	if (FlinchMontage) {
 		GetMovementComponent()->StopActiveMovement();
 		float animationDelay = PlayAnimMontage(FlinchMontage);
 		GetWorld()->GetTimerManager().SetTimer(OnFlinchHandler, this, &AMainCharacter::OnFlinchStop, animationDelay, false);
 		Health -= Damage;
 	}
+	return 0.f;
 }
 
 void AMainCharacter::AttackL() {

@@ -22,7 +22,7 @@ void UComboComponent::InitiateAttack(EAttackType AttackType) {
 			bAttackWindowOpen = false;
 			Owner->SetIsAttacking(true);
 			Owner->SetDodgeWindow(false);
-			ApplyStatusToWeapon(ComboNode->Debuff);
+			ApplyStatusToWeapon(EStatusDebuffType::VE_POISON);
 			ComboChain++;
 			float animationDelay = Owner->PlayAnimMontage(AttackMontages[(uint8)AttackType]);
 			GetWorld()->GetTimerManager().SetTimer(OnAttackHandler, this, &UComboComponent::OnAttackStop, animationDelay, false);
@@ -58,15 +58,12 @@ void UComboComponent::SetAttackWindow(bool IsOpen) {
 
 void UComboComponent::ConstructCombos() {
 	ComboChains = new FAttackComboNode();
+
 	ComboChains->L = new FAttackComboNode();
 	ComboChains->L->L = new FAttackComboNode();
-	ComboChains->L->L->L = new FAttackComboNode(EComboDebuffType::VE_BURST);
-	ComboChains->L->L->R = new FAttackComboNode(EComboDebuffType::VE_SUNDER);
 
 	ComboChains->R = new FAttackComboNode();
 	ComboChains->R->R = new FAttackComboNode();
-	ComboChains->R->R->R = new FAttackComboNode(EComboDebuffType::VE_POISON);
-	ComboChains->R->R->L = new FAttackComboNode(EComboDebuffType::VE_SLEEP);
 }
 
 // Called when the game starts

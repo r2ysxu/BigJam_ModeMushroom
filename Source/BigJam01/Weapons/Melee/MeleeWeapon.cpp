@@ -26,7 +26,7 @@ AMeleeWeapon::AMeleeWeapon() {
 	//MeleeWeaponBox->bHiddenInGame = false;
 }
 
-void AMeleeWeapon::ApplyDebuffEnhancement(EComboDebuffType DebuffType) {
+void AMeleeWeapon::ApplyDebuffEnhancement(EStatusDebuffType DebuffType) {
 	CurrentEffect = DebuffType;
 }
 
