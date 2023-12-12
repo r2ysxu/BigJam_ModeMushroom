@@ -17,10 +17,7 @@ UComboComponent::UComboComponent() {
 
 void UComboComponent::InitiateAttack(EAttackType AttackType) {
 	if (IsAttackChainable(AttackType) && !Owner->GetIsDodging()) {
-		if (!bAttackWindowOpen && ComboChain > 0) {
-			bAttackWindowMissed = true;
-			ClearHUD();
-		} else if (!bAttackWindowMissed && Owner->DrainStamina(StaminaDrainPerAttack)) {
+		if (Owner->DrainStamina(StaminaDrainPerAttack)) {
 			bCanApplyDamage = true;
 			bAttackWindowOpen = false;
 			Owner->SetIsAttacking(true);
@@ -29,11 +26,6 @@ void UComboComponent::InitiateAttack(EAttackType AttackType) {
 			ComboChain++;
 			float animationDelay = Owner->PlayAnimMontage(AttackMontages[(uint8)AttackType]);
 			GetWorld()->GetTimerManager().SetTimer(OnAttackHandler, this, &UComboComponent::OnAttackStop, animationDelay, false);
-			if (ComboNode->Debuff == EComboDebuffType::VE_NONE) {
-				UpdateHUDs(AttackMontages[(uint8)AttackType], animationDelay);
-			} else {
-				ClearHUD();
-			}
 		}
 	}
 }
@@ -56,34 +48,12 @@ void UComboComponent::OnComboReset() {
 	SetAttackWindow(false);
 	ComboChain = 0;
 	ComboNode = ComboChains;
-	bAttackWindowMissed = false;
 	Owner->ClearLastHitEnemy();
-	ClearHUD();
 	GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Emerald, TEXT("ResetCombo"));
 }
 
 void UComboComponent::SetAttackWindow(bool IsOpen) {
 	bAttackWindowOpen = IsOpen;
-}
-
-void UComboComponent::UpdateHUDs(UAnimMontage* AnimMontage, float AnimTime) {
-	TArray<const FAnimNotifyEvent*> animNotifies;
-	AnimMontage->GetAnimNotifies(0.f, AnimTime, false, animNotifies);
-	float startTime = 0;
-	float endTime = 0;
-	for (int i = 0; i < animNotifies.Num(); i++) {
-		if (FName("AnimNotify_NextAttackCombo").IsEqual(animNotifies[i]->GetNotifyEventName())) {
-			startTime = animNotifies[i]->GetTriggerTime();
-		} else if (FName("AnimNotify_ResetCombo").IsEqual(animNotifies[i]->GetNotifyEventName())) {
-			endTime = animNotifies[i]->GetTriggerTime();
-		}
-		Owner->GetComboHud()->SetTimingRange(AnimTime, FVector2D(startTime, endTime));
-		Owner->GetComboHud()->PlayTimer();
-	}
-}
-
-void UComboComponent::ClearHUD() {
-	Owner->GetComboHud()->OnHide();
 }
 
 void UComboComponent::ConstructCombos() {

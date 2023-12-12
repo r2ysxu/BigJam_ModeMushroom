@@ -69,9 +69,6 @@ protected:
 	class UAnimMontage* FlinchMontage;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HUD")
-	TSubclassOf<class UComboHUD> ComboHudClass;
-	class UComboHUD* ComboHud;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HUD")
 	TSubclassOf<class UPlayerStatHUD> PlayerHudClass;
 	class UPlayerStatHUD* PlayerHud;
 	
@@ -118,6 +115,5 @@ public:
 	FORCEINLINE UFUNCTION(BlueprintCallable) float GetStamina();
 	UFUNCTION(BlueprintCallable) bool DrainStamina(float Value);
 	UFUNCTION(BlueprintCallable) class UComboComponent* GetComboComponent();
-	class UComboHUD* GetComboHud();
 
 };

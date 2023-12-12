@@ -30,7 +30,6 @@ private:
 	volatile int ComboChain = 0;
 	volatile bool bCanApplyDamage = false;
 	volatile bool bAttackWindowOpen = true;
-	volatile bool bAttackWindowMissed = false;
 
 	struct FAttackComboNode* ComboNode;
 
@@ -45,8 +44,6 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 	bool IsAttackChainable(EAttackType CurrentAttack);
-	void UpdateHUDs(class UAnimMontage* AnimMontage, float AnimTime);
-	void ClearHUD();
 
 public:	
 	UComboComponent();

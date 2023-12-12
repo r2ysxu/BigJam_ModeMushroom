@@ -65,10 +65,6 @@ UComboComponent* AMainCharacter::GetComboComponent() {
 	return ComboComponet;
 }
 
-UComboHUD* AMainCharacter::GetComboHud() {
-	return ComboHud;
-}
-
 void AMainCharacter::BeginPlay() {
 	Super::BeginPlay();
 	SetupHUDs();
@@ -105,11 +101,6 @@ void AMainCharacter::SetupWeapons() {
 }
 
 void AMainCharacter::SetupHUDs() {
-	ComboHud = CreateWidget<UComboHUD>(GetWorld(), ComboHudClass);
-	if (ComboHud) {
-		ComboHud->AddToViewport();
-		ComboHud->SetVisibility(ESlateVisibility::Hidden);
-	}
 	PlayerHud = CreateWidget<UPlayerStatHUD>(GetWorld(), PlayerHudClass);
 	if (PlayerHud) {
 		PlayerHud->SetPlayer(this);
