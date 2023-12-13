@@ -4,6 +4,10 @@
 #include "BaseEnemy.h"
 #include "../ActorComponents/BaseAttackComponent.h"
 #include "../ActorComponents/DebuffComponent.h"
+#include "../../Widgets/HUDs/EnemyHud.h"
+
+#include "Components/WidgetComponent.h"
+#include "Blueprint/UserWidget.h"
 
 // Sets default values
 ABaseEnemy::ABaseEnemy() {
@@ -11,11 +15,18 @@ ABaseEnemy::ABaseEnemy() {
 	PrimaryActorTick.bCanEverTick = false;
 
 	DebuffComponent = CreateDefaultSubobject<UDebuffComponent>(TEXT("DebuffComponent"));
+	EnemyHudComponet = CreateDefaultSubobject<UWidgetComponent>(TEXT("EnemyHUD"));
+	EnemyHudComponet->SetupAttachment(GetRootComponent());
 }
 
 // Called when the game starts or when spawned
 void ABaseEnemy::BeginPlay() {
 	Super::BeginPlay();
+	EnemyHud = CreateWidget<UEnemyHUD>(GetWorld(), EnemyHudClass);
+	if (EnemyHud) {
+		EnemyHud->SetEnemy(this);
+		EnemyHudComponet->SetWidget(EnemyHud);
+	}
 }
 
 bool ABaseEnemy::CheckAlive() {

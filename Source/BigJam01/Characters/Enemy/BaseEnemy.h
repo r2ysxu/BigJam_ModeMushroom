@@ -3,6 +3,7 @@
 #pragma once
 
 #include "../BaseCharacter.h"
+#include "../../Widgets/HUDs/EnemyHUD.h"
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
@@ -15,6 +16,12 @@ class BIGJAM01_API ABaseEnemy : public ABaseCharacter {
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UDebuffComponent* DebuffComponent;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HUD")
+	class UWidgetComponent* EnemyHudComponet;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HUD")
+	TSubclassOf<class UEnemyHUD> EnemyHudClass;
+	class UEnemyHUD* EnemyHud;
+	
 
 	bool bSleeping = false;
 

@@ -4,19 +4,19 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "PlayerStatHUD.generated.h"
+#include "EnemyHUD.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
-class BIGJAM01_API UPlayerStatHUD : public UUserWidget {
+class BIGJAM01_API UEnemyHUD : public UUserWidget {
 	GENERATED_BODY()
-	
+
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	class AMainCharacter* Owner;
+	class ABaseEnemy* Owner;
 
 public:
-	void SetPlayer(class AMainCharacter* Player);
+	void SetEnemy(class ABaseEnemy* Enemy);
 };
