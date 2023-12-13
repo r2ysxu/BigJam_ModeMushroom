@@ -5,6 +5,8 @@
 #include "../../Characters/BaseCharacter.h"
 
 #include "Components/BoxComponent.h"
+#include "NiagaraComponent.h"
+#include "NiagaraFunctionLibrary.h"
 
 // Sets default values
 AMeleeWeapon::AMeleeWeapon() {
@@ -24,6 +26,9 @@ AMeleeWeapon::AMeleeWeapon() {
 	MeleeWeaponBox->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
 	MeleeWeaponBox->SetupAttachment(GetRootComponent());
 	//MeleeWeaponBox->bHiddenInGame = false;
+
+	WeaponFXComponent = CreateDefaultSubobject<UNiagaraComponent>("WeaponFXComponent");
+	WeaponFXComponent->SetupAttachment(GetRootComponent());
 }
 
 void AMeleeWeapon::ApplyDebuffEnhancement(EStatusDebuffType DebuffType) {
@@ -42,18 +47,36 @@ void AMeleeWeapon::Equip(USceneComponent* Mesh, FName SocketName) {
 	bEquipped = true;
 	DetachFromActor(FDetachmentTransformRules::KeepRelativeTransform);
 	AttachToComponent(Mesh, FAttachmentTransformRules::KeepRelativeTransform, SocketName);
+	WeaponFXComponent->ActivateSystem();
 }
 
 void AMeleeWeapon::UnEquip(USceneComponent* Mesh, FName SocketName) {
 	bEquipped = false;
 	DetachFromActor(FDetachmentTransformRules::KeepRelativeTransform);
 	AttachToComponent(Mesh, FAttachmentTransformRules::KeepRelativeTransform, SocketName);
+	WeaponFXComponent->DeactivateImmediate();
 }
 
 // Called when the game starts or when spawned
 void AMeleeWeapon::BeginPlay() {
 	Super::BeginPlay();
 	MeleeWeaponBox->OnComponentBeginOverlap.AddDynamic(this, &AMeleeWeapon::OnWeaponMeleeHit);
+
+	FVector start = WeaponMeshComponent->GetSocketLocation("start");
+	FVector end = WeaponMeshComponent->GetSocketLocation("end");
+	FVector fxLoc = (start + end) / 2.0;
+	FRotator rotation = FRotationMatrix::MakeFromZ(end - start).Rotator();
+
+	WeaponLength = (end - start).Size();
+	GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, FString::SanitizeFloat(WeaponLength));
+
+	if (IsValid(WeaponFXSystem)) {
+		WeaponFXComponent = UNiagaraFunctionLibrary::SpawnSystemAttached(WeaponFXSystem, WeaponMeshComponent, "NiagaraSystem",
+			fxLoc, rotation, EAttachLocation::KeepWorldPosition, false, false, ENCPoolMethod::AutoRelease, true);
+		WeaponFXComponent->SetFloatParameter("trail_width", WeaponLength);
+	}
+	else {
+	}
 }
 
 void AMeleeWeapon::OnWeaponMeleeHit(UPrimitiveComponent* OverlappedComponent, AActor* actor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult) {

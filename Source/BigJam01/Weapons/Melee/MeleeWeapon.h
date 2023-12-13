@@ -26,10 +26,16 @@ class BIGJAM01_API AMeleeWeapon : public ABaseWeapon {
 protected:
 	UPROPERTY(EditAnywhere, Category = Mesh)
 	class UStaticMeshComponent* WeaponMeshComponent;
+	UPROPERTY(EditAnywhere, Category = "FX")
+	class UNiagaraSystem* WeaponFXSystem;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FX")
+	class UNiagaraComponent* WeaponFXComponent;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UBoxComponent* MeleeWeaponBox;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	float BaseDamage = 0.1f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	double WeaponLength;
 	class ABaseCharacter* LastHitEnemy = nullptr;
 	bool bEquipped = false;
 
