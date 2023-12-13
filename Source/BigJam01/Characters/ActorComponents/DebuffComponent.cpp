@@ -49,16 +49,20 @@ float UDebuffComponent::ConsumeMarkDebuff() {
 	case EMarkDebuffType::VE_LL: 
 		CurrentDoTDamage = TotalDoTDamage;
 		GetWorld()->GetTimerManager().SetTimer(DotHandler, this, &UDebuffComponent::ApplyDoT, 0.5f, true);
+		CurrentMark = EMarkDebuffType::VE_NONE;
 		break;
 	case EMarkDebuffType::VE_LR:
 		Owner->TakeHitDamage(AdditionalDmg);
+		CurrentMark = EMarkDebuffType::VE_NONE;
 		break;
 	case EMarkDebuffType::VE_RL:
 		return AdditionalDmg;
+		CurrentMark = EMarkDebuffType::VE_NONE;
 		break;
 	case EMarkDebuffType::VE_RR:
 		Owner->SetIsSleeping(true);
 		GetWorld()->GetTimerManager().SetTimer(OnWakeUpHandler, this, &UDebuffComponent::OnWakeUp, SleepDuration, false);
+		CurrentMark = EMarkDebuffType::VE_NONE;
 		break;
 	}
 	return 0.f;
