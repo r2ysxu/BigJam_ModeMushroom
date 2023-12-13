@@ -18,5 +18,9 @@ protected:
 	class AMainCharacter* Owner;
 
 public:
+<<<<<<< HEAD:Source/BigJam01/Widgets/HUDs/PlayerStatHUD.h
 	void SetPlayer(class AMainCharacter* Player);
+=======
+	void SetEnemy(ABaseEnemy* Enemy);
+>>>>>>> Added Status effect to enemy HUD:Source/BigJam01/Widgets/HUDs/EnemyHud.h
 };

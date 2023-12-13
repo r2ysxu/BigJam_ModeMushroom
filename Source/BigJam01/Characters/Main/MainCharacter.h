@@ -36,7 +36,7 @@ private:
 	void InitiateAttack(EAttackType AttackType);
 
 protected:
-	volatile bool bAttacking = true;
+	volatile bool bAttacking = false;
 	volatile bool bRollWindowOpen = true;
 	volatile bool bRolling = false;
 	volatile bool bFlinching = false;

@@ -16,7 +16,7 @@ UENUM(BlueprintType)
 enum class EStatusDebuffType : uint8 {
 	VE_NONE		 UMETA(DisplayName = "None"),
 	VE_POISON    UMETA(DisplayName = "Poison"),
-	VE_TOXIN     UMETA(DispalyName = "Toxin"),
+	VE_TOXIN     UMETA(DisplayName = "Toxin"),
 	VE_ZMD       UMETA(DisplayName = "ZMD")
 };
 

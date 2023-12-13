@@ -22,7 +22,14 @@ void UComboComponent::InitiateAttack(EAttackType AttackType) {
 			bAttackWindowOpen = false;
 			Owner->SetIsAttacking(true);
 			Owner->SetDodgeWindow(false);
-			ApplyStatusToWeapon(EStatusDebuffType::VE_POISON);
+			switch (AttackType) {
+			case EAttackType::VE_L: 
+				ApplyStatusToWeapon(EStatusDebuffType::VE_POISON);
+				break;
+			case EAttackType::VE_R:
+				ApplyStatusToWeapon(EStatusDebuffType::VE_TOXIN);
+				break;
+			}
 			ComboChain++;
 			float animationDelay = Owner->PlayAnimMontage(AttackMontages[(uint8)AttackType]);
 			GetWorld()->GetTimerManager().SetTimer(OnAttackHandler, this, &UComboComponent::OnAttackStop, animationDelay, false);

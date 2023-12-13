@@ -18,8 +18,12 @@ float UDebuffComponent::ApplyStatus(EStatusDebuffType Status) {
 
 
 bool UDebuffComponent::StatusFusable(EStatusDebuffType Status) {
-	if (Status == EStatusDebuffType::VE_NONE) return false;
-	if (CurrentStatus == EStatusDebuffType::VE_POISON) {
+	if (Status == EStatusDebuffType::VE_NONE) {
+		return false;
+	} else if (CurrentStatus == EStatusDebuffType::VE_NONE) {
+		CurrentStatus = Status;
+		return true;
+	} else if (CurrentStatus == EStatusDebuffType::VE_POISON) {
 		switch (Status) {
 		case EStatusDebuffType::VE_POISON: CurrentMark = EMarkDebuffType::VE_LL; break;
 		case EStatusDebuffType::VE_TOXIN: CurrentMark = EMarkDebuffType::VE_LR; break;

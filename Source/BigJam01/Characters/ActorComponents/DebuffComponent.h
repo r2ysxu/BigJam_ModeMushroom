@@ -12,7 +12,7 @@ UENUM(BlueprintType)
 enum class EMarkDebuffType : uint8 {
 	VE_NONE		UMETA(DisplayName = "None"),
 	VE_LL		UMETA(DisplayName = "Infect"),
-	VE_LR		UMETA(DispalyName = "Sunder"),
+	VE_LR		UMETA(DisplayName = "Sunder"),
 	VE_RL		UMETA(DisplayName = "Spore"),
 	VE_RR		UMETA(DisplayName = "Drowsy")
 };
@@ -40,7 +40,10 @@ protected:
 	float SleepDuration = 1.f;
 
 	class ABaseEnemy* Owner;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	EStatusDebuffType CurrentStatus = EStatusDebuffType::VE_NONE;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	EMarkDebuffType CurrentMark = EMarkDebuffType::VE_NONE;
 
 	// Called when the game starts
