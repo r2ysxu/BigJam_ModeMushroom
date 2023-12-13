@@ -29,7 +29,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UBoxComponent* MeleeWeaponBox;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-	float BaseDamage = 0.01f;
+	float BaseDamage = 0.1f;
 	class ABaseEnemy* LastHitEnemy = nullptr;
 
 	EStatusDebuffType CurrentEffect;

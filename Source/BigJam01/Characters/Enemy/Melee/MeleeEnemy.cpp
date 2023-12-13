@@ -104,7 +104,7 @@ void AMeleeEnemy::OnWeaponMeleeHit(UPrimitiveComponent* OverlappedComponent, AAc
 	if (actor == this || !bAttacking || !bAttackSwing) return;
 	AMainCharacter* mc = Cast<AMainCharacter>(actor);
 	if (IsValid(mc)) {
-		mc->OnHitByOpponent(10.f, EStatusDebuffType::VE_NONE);
+		mc->OnHitByOpponent(.1f, EStatusDebuffType::VE_NONE);
 		GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Yellow, TEXT("Hit"));
 		bAttackSwing = false;
 	}

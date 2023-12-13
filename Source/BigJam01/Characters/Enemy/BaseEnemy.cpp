@@ -28,6 +28,7 @@ void ABaseEnemy::TakeHitDamage(float Damage) {
 }
 
 float ABaseEnemy::OnHitByOpponent(float Damage, EStatusDebuffType Status) {
+	TakeHitDamage(Damage);
 	return DebuffComponent->ApplyStatus(Status);
 }
 

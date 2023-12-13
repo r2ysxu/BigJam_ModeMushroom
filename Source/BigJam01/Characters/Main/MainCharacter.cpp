@@ -206,11 +206,11 @@ bool AMainCharacter::DrainStamina(float Value) {
 }
 
 float AMainCharacter::OnHitByOpponent(float Damage, EStatusDebuffType Status) {
+	Health -= FMath::Min(Health, Damage);
 	if (FlinchMontage) {
 		GetMovementComponent()->StopActiveMovement();
 		float animationDelay = PlayAnimMontage(FlinchMontage);
 		GetWorld()->GetTimerManager().SetTimer(OnFlinchHandler, this, &AMainCharacter::OnFlinchStop, animationDelay, false);
-		Health -= Damage;
 	}
 	return 0.f;
 }
@@ -251,12 +251,15 @@ void AMainCharacter::FocusEnemy() {
 }
 
 void AMainCharacter::EquipWeapon(uint32 WeaponIndex) {
-	if (AvailableWeapons.IsValidIndex(WeaponIndex)) {
+	if (AvailableWeapons.IsValidIndex(WeaponIndex) && !GetIsAttacking()) {
 		GetEquippedWeapon()->DetachFromActor(FDetachmentTransformRules::KeepRelativeTransform);
 		GetEquippedWeapon()->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, EquippableWeaponClasses[EquipedWeaponIndex].SocketName);
 		EquipedWeaponIndex = WeaponIndex;
 		GetEquippedWeapon()->DetachFromActor(FDetachmentTransformRules::KeepRelativeTransform);
 		GetEquippedWeapon()->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, WeaponSocket);
 		ComboComponet->SetWeapon(GetEquippedWeapon());
+		DaoComponet->OnAttackStop();
+		ComboComponet->OnAttackStop();
+		ChargeComponent->OnAttackStop();
 	}
 }

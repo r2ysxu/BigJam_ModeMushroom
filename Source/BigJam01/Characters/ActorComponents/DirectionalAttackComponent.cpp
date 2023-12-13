@@ -36,7 +36,6 @@ void UDirectionalAttackComponent::InitiateAttack(EAttackType AttackType) {
 	if (AttackType != EAttackType::VE_L) return;
 	if (IsAttackChainable(AttackType) && !Owner->GetIsDodging() && bAttackWindowOpen && Owner->DrainStamina(StaminaDrainPerAttack)) {
 		bAttackWindowOpen = false;
-		GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Yellow, FString::Printf(TEXT("%d"), LastMovement));
 		UAnimMontage* montage;
 		switch (LastMovement) {
 		case EAttackSwingDirection::VE_F:

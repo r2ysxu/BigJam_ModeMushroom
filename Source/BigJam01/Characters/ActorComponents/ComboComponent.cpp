@@ -16,7 +16,7 @@ UComboComponent::UComboComponent() {
 }
 
 void UComboComponent::InitiateAttack(EAttackType AttackType) {
-	if (IsAttackChainable(AttackType) && !Owner->GetIsDodging()) {
+	if (IsAttackChainable(AttackType) && bAttackWindowOpen && !Owner->GetIsDodging()) {
 		if (Owner->DrainStamina(StaminaDrainPerAttack)) {
 			bCanApplyDamage = true;
 			bAttackWindowOpen = false;
@@ -26,6 +26,8 @@ void UComboComponent::InitiateAttack(EAttackType AttackType) {
 			ComboChain++;
 			float animationDelay = Owner->PlayAnimMontage(AttackMontages[(uint8)AttackType]);
 			GetWorld()->GetTimerManager().SetTimer(OnAttackHandler, this, &UComboComponent::OnAttackStop, animationDelay, false);
+		} else {
+			ComboNode = ComboChains;
 		}
 	}
 }
@@ -74,10 +76,10 @@ void UComboComponent::BeginPlay() {
 
 bool UComboComponent::IsAttackChainable(EAttackType CurrentAttack) {
 	if (ComboNode == nullptr) return false;
-	else if (CurrentAttack == EAttackType::VE_L && ComboNode->L) {
+	else if (CurrentAttack == EAttackType::VE_L && ComboNode->L != nullptr) {
 		ComboNode = ComboNode->L;
 		return true;
-	} else if (CurrentAttack == EAttackType::VE_R && ComboNode->R) {
+	} else if (CurrentAttack == EAttackType::VE_R && ComboNode->R != nullptr) {
 		ComboNode = ComboNode->R;
 		return true;
 	}
