@@ -48,8 +48,7 @@ void UChargeAttackComponent::OnNextCombo() {
 void UChargeAttackComponent::OnComboReset() {
 	SetAttackWindow(false);
 	ComboChain = 0;
-	Owner->ClearLastHitEnemy();
-	GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Emerald, TEXT("ResetCombo"));
+	ClearLastHitTarget();
 }
 
 bool UChargeAttackComponent::OnChargedUp() {

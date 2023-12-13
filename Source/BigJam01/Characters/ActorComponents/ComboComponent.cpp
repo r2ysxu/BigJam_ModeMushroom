@@ -30,7 +30,6 @@ void UComboComponent::InitiateAttack(EAttackType AttackType) {
 				ApplyStatusToWeapon(EStatusDebuffType::VE_TOXIN);
 				break;
 			}
-			ComboChain++;
 			float animationDelay = Owner->PlayAnimMontage(AttackMontages[(uint8)AttackType]);
 			GetWorld()->GetTimerManager().SetTimer(OnAttackHandler, this, &UComboComponent::OnAttackStop, animationDelay, false);
 		} else {
@@ -45,7 +44,6 @@ void UComboComponent::OnAttackStop() {
 	bCanApplyDamage = false;
 	Owner->SetIsAttacking(false);
 	Owner->SetDodgeWindow(true);
-	Owner->ClearLastHitEnemy();
 }
 
 void UComboComponent::OnNextCombo() {
@@ -55,10 +53,8 @@ void UComboComponent::OnNextCombo() {
 
 void UComboComponent::OnComboReset() {
 	SetAttackWindow(false);
-	ComboChain = 0;
 	ComboNode = ComboChains;
-	Owner->ClearLastHitEnemy();
-	GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Emerald, TEXT("ResetCombo"));
+	ClearLastHitTarget();
 }
 
 void UComboComponent::SetAttackWindow(bool IsOpen) {
@@ -91,8 +87,4 @@ bool UComboComponent::IsAttackChainable(EAttackType CurrentAttack) {
 		return true;
 	}
 	return false;
-}
-
-void UComboComponent::SetWeapon(AMeleeWeapon* EquippedWeapon) {
-	Weapon = EquippedWeapon;
 }

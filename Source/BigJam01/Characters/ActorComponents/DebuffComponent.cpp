@@ -18,6 +18,7 @@ float UDebuffComponent::ApplyStatus(EStatusDebuffType Status) {
 
 
 bool UDebuffComponent::StatusFusable(EStatusDebuffType Status) {
+	GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, FString::Printf(TEXT("%d"), Status));
 	if (Status == EStatusDebuffType::VE_NONE) {
 		return false;
 	} else if (CurrentStatus == EStatusDebuffType::VE_NONE) {

@@ -34,6 +34,8 @@ protected:
 
 public:
 	UBaseAttackComponent();
-	
+
+	virtual void SetWeapon(class AMeleeWeapon* EquippedWeapon);
 	virtual void ApplyStatusToWeapon(EStatusDebuffType Debuff);
+	virtual void ClearLastHitTarget();
 };

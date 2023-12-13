@@ -30,6 +30,26 @@ void AMeleeWeapon::ApplyDebuffEnhancement(EStatusDebuffType DebuffType) {
 	CurrentEffect = DebuffType;
 }
 
+void AMeleeWeapon::MarkLastHitEnemy(ABaseCharacter* Enemy) {
+	LastHitEnemy = Enemy;
+}
+
+void AMeleeWeapon::ClearLastHitEnemy() {
+	LastHitEnemy = nullptr;
+}
+
+void AMeleeWeapon::Equip(USceneComponent* Mesh, FName SocketName) {
+	bEquipped = true;
+	DetachFromActor(FDetachmentTransformRules::KeepRelativeTransform);
+	AttachToComponent(Mesh, FAttachmentTransformRules::KeepRelativeTransform, SocketName);
+}
+
+void AMeleeWeapon::UnEquip(USceneComponent* Mesh, FName SocketName) {
+	bEquipped = false;
+	DetachFromActor(FDetachmentTransformRules::KeepRelativeTransform);
+	AttachToComponent(Mesh, FAttachmentTransformRules::KeepRelativeTransform, SocketName);
+}
+
 // Called when the game starts or when spawned
 void AMeleeWeapon::BeginPlay() {
 	Super::BeginPlay();
@@ -37,6 +57,10 @@ void AMeleeWeapon::BeginPlay() {
 }
 
 void AMeleeWeapon::OnWeaponMeleeHit(UPrimitiveComponent* OverlappedComponent, AActor* actor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult) {
-	if (actor == this || actor == Owner) return;
-	Owner->OnHitTarget(Cast<class ABaseCharacter>(actor), BaseDamage, CurrentEffect);
+	if (actor == this || actor == Owner || !Owner->GetIsAttacking() || !bEquipped) return;
+	ABaseCharacter* target = Cast<class ABaseCharacter>(actor);
+	if (IsValid(target) && target != LastHitEnemy) {
+		LastHitEnemy = target;
+		Owner->OnHitTarget(target, BaseDamage, CurrentEffect);
+	}
 }

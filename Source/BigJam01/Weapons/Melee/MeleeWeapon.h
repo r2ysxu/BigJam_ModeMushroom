@@ -30,7 +30,8 @@ protected:
 	class UBoxComponent* MeleeWeaponBox;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	float BaseDamage = 0.1f;
-	class ABaseEnemy* LastHitEnemy = nullptr;
+	class ABaseCharacter* LastHitEnemy = nullptr;
+	bool bEquipped = false;
 
 	EStatusDebuffType CurrentEffect;
 
@@ -42,4 +43,8 @@ public:
 	AMeleeWeapon();
 
 	void ApplyDebuffEnhancement(EStatusDebuffType DebuffType);
+	void MarkLastHitEnemy(class ABaseCharacter* Enemy);
+	void ClearLastHitEnemy();
+	void Equip(class USceneComponent* Mesh, FName SocketName);
+	void UnEquip(class USceneComponent* Mesh, FName SocketName);
 };

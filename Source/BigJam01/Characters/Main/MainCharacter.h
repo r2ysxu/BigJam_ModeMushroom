@@ -104,9 +104,6 @@ public:
 	void OnNextCombo();
 	void OnComboReset();
 	void OnStaminaRegen();
-	void MarkLastHitEnemy(class ABaseCharacter* Enemy);
-	void ClearLastHitEnemy();
-	bool IsLastHitEnemy(class ABaseCharacter* Enemy);
 	bool HasCharged();
 	FORCEINLINE bool GetIsAttacking() { return bAttacking; }
 	FORCEINLINE virtual uint8 GetTeam() override { return 1; }

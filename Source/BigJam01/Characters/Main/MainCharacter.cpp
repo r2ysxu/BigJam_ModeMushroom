@@ -79,10 +79,9 @@ void AMainCharacter::SetDodgeWindow(bool IsOpen) {
 
 bool AMainCharacter::OnHitTarget(ABaseCharacter* Target, float Damage, EStatusDebuffType Status) {
 	if (!bAttacking) return false;
-	if (IsValid(Target) && !IsLastHitEnemy(Target)) {
+	if (IsValid(Target)) {
 		Health = FMath::Min(1.f, Health + Target->OnHitByOpponent(Damage, Status));
 		Target->CheckAlive();
-		MarkLastHitEnemy(Target);
 		return true;
 	}
 	return false;
@@ -126,18 +125,6 @@ void AMainCharacter::OnStaminaRegen() {
 	if (!bAttacking && !GetIsDodging()) {
 		Stamina = FMath::Min(1.f, StaminaRegenRate + Stamina);
 	}
-}
-
-void AMainCharacter::MarkLastHitEnemy(ABaseCharacter* Enemy) {
-	LastHitEnemy = Enemy;
-}
-
-void AMainCharacter::ClearLastHitEnemy() {
-	LastHitEnemy = nullptr;
-}
-
-bool AMainCharacter::IsLastHitEnemy(ABaseCharacter* Enemy) {
-	return LastHitEnemy == Enemy;
 }
 
 void AMainCharacter::InitiateAttack(EAttackType AttackType) {
@@ -252,12 +239,14 @@ void AMainCharacter::FocusEnemy() {
 
 void AMainCharacter::EquipWeapon(uint32 WeaponIndex) {
 	if (AvailableWeapons.IsValidIndex(WeaponIndex) && !GetIsAttacking()) {
-		GetEquippedWeapon()->DetachFromActor(FDetachmentTransformRules::KeepRelativeTransform);
-		GetEquippedWeapon()->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, EquippableWeaponClasses[EquipedWeaponIndex].SocketName);
+		GetEquippedWeapon()->UnEquip(GetMesh(), EquippableWeaponClasses[EquipedWeaponIndex].SocketName);
 		EquipedWeaponIndex = WeaponIndex;
-		GetEquippedWeapon()->DetachFromActor(FDetachmentTransformRules::KeepRelativeTransform);
-		GetEquippedWeapon()->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, WeaponSocket);
+		GetEquippedWeapon()->Equip(GetMesh(), WeaponSocket);
+
 		ComboComponet->SetWeapon(GetEquippedWeapon());
+		DaoComponet->SetWeapon(GetEquippedWeapon());
+		ChargeComponent->SetWeapon(GetEquippedWeapon());
+
 		DaoComponet->OnAttackStop();
 		ComboComponet->OnAttackStop();
 		ChargeComponent->OnAttackStop();

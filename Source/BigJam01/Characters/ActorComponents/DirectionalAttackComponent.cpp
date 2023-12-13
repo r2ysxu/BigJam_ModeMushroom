@@ -73,7 +73,7 @@ void UDirectionalAttackComponent::OnNextCombo() {
 void UDirectionalAttackComponent::OnComboReset() {
 	SetAttackWindow(false);
 	CurrentAttackIndex = 0;
-	Owner->ClearLastHitEnemy();
+	ClearLastHitTarget();
 }
 
 void UDirectionalAttackComponent::OnAttackStop() {

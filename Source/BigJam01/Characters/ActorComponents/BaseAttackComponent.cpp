@@ -9,9 +9,19 @@ UBaseAttackComponent::UBaseAttackComponent() {
 	PrimaryComponentTick.bCanEverTick = false;
 }
 
+void UBaseAttackComponent::SetWeapon(AMeleeWeapon* EquippedWeapon) {
+	Weapon = EquippedWeapon;
+}
+
 void UBaseAttackComponent::ApplyStatusToWeapon(EStatusDebuffType Debuff) {
 	if (IsValid(Weapon)) {
 		Weapon->ApplyDebuffEnhancement(Debuff);
+	}
+}
+
+void UBaseAttackComponent::ClearLastHitTarget() {
+	if (IsValid(Weapon)) {
+		Weapon->ClearLastHitEnemy();
 	}
 }
 

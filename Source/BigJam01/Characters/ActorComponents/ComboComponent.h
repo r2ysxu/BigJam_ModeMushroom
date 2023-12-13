@@ -23,7 +23,6 @@ class BIGJAM01_API UComboComponent : public UBaseAttackComponent {
 private:
 	const float StaminaDrainPerAttack = .20f;
 
-	volatile int ComboChain = 0;
 	volatile bool bCanApplyDamage = false;
 	volatile bool bAttackWindowOpen = true;
 
@@ -44,7 +43,6 @@ protected:
 public:	
 	UComboComponent();
 
-	void SetWeapon(class AMeleeWeapon* Weapon);
 	void InitiateAttack(EAttackType AttackType);
 	void OnAttackStop();
 	void OnNextCombo();
