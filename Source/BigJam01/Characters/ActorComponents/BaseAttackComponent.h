@@ -9,7 +9,9 @@
 UENUM(BlueprintType)
 enum class EAttackType : uint8 {
 	VE_L UMETA(DisplayName = "Attack_L"),
-	VE_R UMETA(DisplayName = "Attack_R")
+	VE_R UMETA(DisplayName = "Attack_R"),
+	VE_Q UMETA(DisplayName = "Attack_Q"),
+	VE_E UMETA(DisplayName = "Attack_E")
 };
 
 UENUM(BlueprintType)

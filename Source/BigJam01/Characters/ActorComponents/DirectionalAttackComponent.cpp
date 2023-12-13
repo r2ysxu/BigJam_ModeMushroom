@@ -15,16 +15,15 @@ void UDirectionalAttackComponent::BeginPlay() {
 	Owner = Cast<AMainCharacter>(GetOwner()); // Change to generic later
 }
 
-void UDirectionalAttackComponent::SetDirectionalMovement(FVector2D MovementVector) {
-	//if (bAttacking) return;
-	if (FMath::Abs(MovementVector.Y) > FMath::Abs(MovementVector.X)) {
+void UDirectionalAttackComponent::SetDirectionalMovement(FVector MovementVector) {
+	//attack input while midair
+	if (FMath::Abs(MovementVector.Z) > 0.f){
+		LastMovement = EAttackSwingDirection::VE_J;
+	}
+	else if (FMath::Abs(MovementVector.Y) > FMath::Abs(MovementVector.X)) {
 		LastMovement = EAttackSwingDirection::VE_F;
-	} else if (MovementVector.X < 0) {
-		LastMovement = EAttackSwingDirection::VE_L;
-	} else if (MovementVector.X > 0) {
-		LastMovement = EAttackSwingDirection::VE_R;
 	} else {
-		LastMovement = EAttackSwingDirection::VE_F;
+		LastMovement = EAttackSwingDirection::VE_N;
 	}
 }
 
@@ -33,32 +32,38 @@ bool UDirectionalAttackComponent::IsAttackChainable(EAttackType CurrentAttack) {
 }
 
 void UDirectionalAttackComponent::InitiateAttack(EAttackType AttackType) {
-	if (AttackType != EAttackType::VE_L) return;
-	if (IsAttackChainable(AttackType) && !Owner->GetIsDodging() && bAttackWindowOpen && Owner->DrainStamina(StaminaDrainPerAttack)) {
+	UAnimMontage* montage = nullptr;
+	if (AttackType == EAttackType::VE_Q) {
 		bAttackWindowOpen = false;
-		UAnimMontage* montage;
+		montage = LeftAttackMontages[CurrentAttackIndex];
+		CurrentAttackIndex = (CurrentAttackIndex + 1) % LeftAttackMontages.Num();
+	}
+	else if (AttackType == EAttackType::VE_E) {
+		bAttackWindowOpen = false;
+		montage = RightAttackMontages[CurrentAttackIndex];
+		CurrentAttackIndex = (CurrentAttackIndex + 1) % RightAttackMontages.Num();
+	}
+	else if (AttackType == EAttackType::VE_L && IsAttackChainable(AttackType) && !Owner->GetIsDodging() && bAttackWindowOpen && Owner->DrainStamina(StaminaDrainPerAttack)) {
+		bAttackWindowOpen = false;
 		switch (LastMovement) {
-		case EAttackSwingDirection::VE_F:
-			montage = FrontAttackMontages[CurrentAttackIndex];
-			CurrentAttackIndex = (CurrentAttackIndex + 1) % FrontAttackMontages.Num();
-			break;
-		case EAttackSwingDirection::VE_L:
-			montage = LeftAttackMontages[CurrentAttackIndex];
-			CurrentAttackIndex = (CurrentAttackIndex + 1) % LeftAttackMontages.Num();
-			break;
-		case EAttackSwingDirection::VE_R:
-			montage = RightAttackMontages[CurrentAttackIndex];
-			CurrentAttackIndex = (CurrentAttackIndex + 1) % RightAttackMontages.Num();
-			break;
-		default: montage = nullptr;
+			case EAttackSwingDirection::VE_F:
+				montage = FrontAttackMontages[CurrentAttackIndex];
+				CurrentAttackIndex = (CurrentAttackIndex + 1) % FrontAttackMontages.Num();
+				break;
+			case EAttackSwingDirection::VE_J:
+				montage = JumpAttackMontages[CurrentAttackIndex];
+				CurrentAttackIndex = (CurrentAttackIndex + 1) % JumpAttackMontages.Num();
+				break;
+			case EAttackSwingDirection::VE_N:
+			default: break;
 		}
-		if (IsValid(montage)) {
-			Owner->SetIsAttacking(true);
-			Owner->SetDodgeWindow(false);
-			ApplyStatusToWeapon(EStatusDebuffType::VE_ZMD);
-			float animationDelay = Owner->PlayAnimMontage(montage);
-			GetWorld()->GetTimerManager().SetTimer(OnAttackHandler, this, &UDirectionalAttackComponent::OnAttackStop, animationDelay, false);
-		}
+	}
+	if (IsValid(montage)) {
+		Owner->SetIsAttacking(true);
+		Owner->SetDodgeWindow(false);
+		ApplyStatusToWeapon(EStatusDebuffType::VE_ZMD);
+		float animationDelay = Owner->PlayAnimMontage(montage);
+		GetWorld()->GetTimerManager().SetTimer(OnAttackHandler, this, &UDirectionalAttackComponent::OnAttackStop, animationDelay, false);
 	}
 }
 

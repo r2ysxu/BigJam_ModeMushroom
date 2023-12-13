@@ -12,7 +12,9 @@ UENUM(BlueprintType)
 enum class EAttackSwingDirection : uint8 {
 	VE_F UMETA(DisplayName = "Front"),
 	VE_L UMETA(DisplayName = "Left"),
-	VE_R UMETA(DisplayName = "Right")
+	VE_R UMETA(DisplayName = "Right"),
+	VE_J UMETA(DisplayName = "Jump"),
+	VE_N UMETA(DisplayName = "None"),
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -31,6 +33,8 @@ protected:
 	TArray<class UAnimMontage*> LeftAttackMontages;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
 	TArray<class UAnimMontage*> RightAttackMontages;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
+	TArray<class UAnimMontage*> JumpAttackMontages;
 
 	EAttackSwingDirection LastMovement = EAttackSwingDirection::VE_F;
 	volatile bool bAttackWindowOpen = true;
@@ -41,7 +45,7 @@ protected:
 public:
 	UDirectionalAttackComponent();
 
-	void SetDirectionalMovement(FVector2D MovementVector);
+	void SetDirectionalMovement(FVector MovementVector);
 	bool IsAttackChainable(EAttackType CurrentAttack);
 	void InitiateAttack(EAttackType AttackType);
 	void SetAttackWindow(bool IsOpen);

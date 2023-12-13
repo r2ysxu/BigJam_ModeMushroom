@@ -51,6 +51,8 @@ class BIGJAM01_API AControlledCharacter : public AMainCharacter {
 	UInputAction* DodgeAction;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* LockOnAction;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* WeaponChangeAction;
 
 private:
 	const float CAMERA_SCROLL_SPEED = 5.f;

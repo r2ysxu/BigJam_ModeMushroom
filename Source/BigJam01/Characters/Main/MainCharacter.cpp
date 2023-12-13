@@ -137,7 +137,7 @@ bool AMainCharacter::CanMoveAndAttack() {
 	return !GetIsDodging() && !bFlinching;
 }
 
-void AMainCharacter::SetMovementDirection(FVector2D MovementVector) {
+void AMainCharacter::SetMovementDirection(FVector MovementVector) {
 	DaoComponet->SetDirectionalMovement(MovementVector);
 }
 
@@ -193,11 +193,23 @@ float AMainCharacter::OnHitByOpponent(float Damage, EStatusDebuffType Status) {
 }
 
 void AMainCharacter::AttackL() {
+	if (GetIsAttacking()) return;
 	InitiateAttack(EAttackType::VE_L);
 }
 
 void AMainCharacter::AttackR() {
+	if (GetIsAttacking()) return;
 	InitiateAttack(EAttackType::VE_R);
+}
+
+void AMainCharacter::AttackQ() {
+	if (GetIsAttacking()) return;
+	InitiateAttack(EAttackType::VE_Q);
+}
+
+void AMainCharacter::AttackE() {
+	if (GetIsAttacking()) return;
+	InitiateAttack(EAttackType::VE_E);
 }
 
 void AMainCharacter::DodgeRoll() {

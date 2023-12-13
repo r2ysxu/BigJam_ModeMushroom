@@ -75,18 +75,21 @@ void AControlledCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 		EnhancedInputComponent->BindAction(AttackLAction, ETriggerEvent::Completed, this, &AControlledCharacter::OnAttackLReleased);
 		EnhancedInputComponent->BindAction(AttackRAction, ETriggerEvent::Triggered, this, &AControlledCharacter::OnAttackRClicked);
 		EnhancedInputComponent->BindAction(AttackRAction, ETriggerEvent::Completed, this, &AControlledCharacter::OnAttackRReleased);
-		EnhancedInputComponent->BindAction(AttackQAction, ETriggerEvent::Completed, this, &AControlledCharacter::ChangePreviousWeapon);
-		EnhancedInputComponent->BindAction(AttackEAction, ETriggerEvent::Completed, this, &AControlledCharacter::ChangeNextWeapon);
+		EnhancedInputComponent->BindAction(AttackQAction, ETriggerEvent::Completed, this, &AControlledCharacter::AttackQ);
+		EnhancedInputComponent->BindAction(AttackEAction, ETriggerEvent::Completed, this, &AControlledCharacter::AttackE);
 		//Dodge
 		EnhancedInputComponent->BindAction(DodgeAction, ETriggerEvent::Triggered, this, &AControlledCharacter::DodgeRoll);
 		//Lock on
 		EnhancedInputComponent->BindAction(LockOnAction, ETriggerEvent::Completed, this, &AControlledCharacter::FocusEnemy);
+		//Weapon change
+		EnhancedInputComponent->BindAction(WeaponChangeAction, ETriggerEvent::Completed, this, &AControlledCharacter::ChangeNextWeapon);
 	}
 }
 
 void AControlledCharacter::Move(const FInputActionValue& Value) {
 	// input is a Vector2D
 	FVector2D MovementVector = Value.Get<FVector2D>();
+	const float ZMovement = GetCharacterMovement()->IsFalling() ? 1.f : 0.f;
 
 	if (Controller != nullptr && CanMove()) {
 		// find out which way is forward
@@ -102,7 +105,7 @@ void AControlledCharacter::Move(const FInputActionValue& Value) {
 		// add movement 
 		AddMovementInput(ForwardDirection, MovementVector.Y);
 		AddMovementInput(RightDirection, MovementVector.X);
-		SetMovementDirection(MovementVector);
+		SetMovementDirection(FVector(MovementVector.X, MovementVector.Y, ZMovement));
 	}
 }
 

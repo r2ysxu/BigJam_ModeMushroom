@@ -75,7 +75,7 @@ protected:
 	bool CanMove();
 	bool CanMoveAndAttack();
 
-	void SetMovementDirection(FVector2D MovementVector);
+	void SetMovementDirection(FVector MovementVector);
 	void OnDodgeRoll();
 	void OnDodgeRollStop();
 	void OnFlinchStop();
@@ -84,6 +84,8 @@ protected:
 	virtual void SetupWeapons() override;
 	virtual void AttackL();
 	virtual void AttackR();
+	virtual void AttackQ();
+	virtual void AttackE();
 	virtual void DodgeRoll();
 	
 	void EquipWeapon(uint32 WeaponIndex);
