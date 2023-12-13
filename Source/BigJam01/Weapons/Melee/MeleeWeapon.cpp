@@ -72,7 +72,7 @@ void AMeleeWeapon::BeginPlay() {
 
 	if (IsValid(WeaponFXSystem)) {
 		WeaponFXComponent = UNiagaraFunctionLibrary::SpawnSystemAttached(WeaponFXSystem, WeaponMeshComponent, "NiagaraSystem",
-			fxLoc, rotation, EAttachLocation::KeepWorldPosition, false, false, ENCPoolMethod::AutoRelease, true);
+			fxLoc, rotation, EAttachLocation::KeepWorldPosition, false, false, ENCPoolMethod::None, true);
 		WeaponFXComponent->SetFloatParameter("trail_width", WeaponLength);
 	}
 	else {
