@@ -85,15 +85,11 @@ protected:
 	virtual void AttackL();
 	virtual void AttackR();
 	virtual void DodgeRoll();
-	virtual void FocusEnemy();
 	
 	void EquipWeapon(uint32 WeaponIndex);
 
 public:
 	AMainCharacter();
-
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
 
 	void SetDodgeWindow(bool IsOpen);
 	virtual bool OnHitTarget(class ABaseCharacter* Target, float Damage, enum EStatusDebuffType Status) override;

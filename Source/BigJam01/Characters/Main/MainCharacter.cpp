@@ -5,7 +5,6 @@
 #include "../ActorComponents/DirectionalAttackComponent.h"
 #include "../ActorComponents/ChargeAttackComponent.h"
 #include "../../Weapons/Melee/MeleeWeapon.h"
-#include "../Enemy/BaseEnemy.h"
 #include "../../Widgets/HUDs/ComboHUD.h"
 #include "../../Widgets/HUDs/PlayerStatHUD.h"
 
@@ -14,8 +13,6 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "Blueprint/UserWidget.h"
-#include "Kismet/KismetSystemLibrary.h"
-#include "Kismet/KismetMathLibrary.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -52,13 +49,6 @@ AMainCharacter::AMainCharacter() {
 	ComboComponet = CreateDefaultSubobject<UComboComponent>(TEXT("ComboAttackComponent"));
 	DaoComponet = CreateDefaultSubobject<UDirectionalAttackComponent>(TEXT("DirectionalAttackComponent"));
 	ChargeComponent = CreateDefaultSubobject<UChargeAttackComponent>(TEXT("ChargeAttackComponent"));
-}
-
-void AMainCharacter::Tick(float DeltaTime) {
-	if (bFocusing && FocusedTarget) {
-		FRotator rotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), FocusedTarget->GetActorLocation());
-		GetController()->SetControlRotation(FMath::RInterpTo(GetActorRotation(), rotation, DeltaTime, 2.f));
-	}
 }
 
 UComboComponent* AMainCharacter::GetComboComponent() {
@@ -217,23 +207,6 @@ void AMainCharacter::DodgeRoll() {
 		float animationDelay = PlayAnimMontage(DodgeMontage);
 		GetWorld()->GetTimerManager().SetTimer(OnDodgeHandler, this, &AMainCharacter::OnDodgeRoll, 0.01f, true, 0);
 		GetWorld()->GetTimerManager().SetTimer(OnDodgeStopHandler, this, &AMainCharacter::OnDodgeRollStop, animationDelay, false);
-	}
-}
-
-void AMainCharacter::FocusEnemy() {
-	float Range = 500.f;
-	const TArray<AActor*> ignored;
-	TArray<FHitResult> result;
-	UKismetSystemLibrary::SphereTraceMulti(GetWorld(), GetActorLocation(), GetActorLocation() * 5.f, 360.f, UEngineTypes::ConvertToTraceType(ECC_Pawn), false, ignored, EDrawDebugTrace::ForDuration, result, true);
-	for (size_t i = 0; i < result.Num(); i++) {
-		ABaseEnemy* target = Cast<ABaseEnemy>(result[i].GetActor());
-		if (IsValid(target)) {
-			FocusedTarget = target;
-			bFocusing = !bFocusing;
-			bUseControllerRotationYaw = bFocusing;
-			GetCharacterMovement()->bOrientRotationToMovement = !bFocusing;
-			break;
-		}
 	}
 }
 

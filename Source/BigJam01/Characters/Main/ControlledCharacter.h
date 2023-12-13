@@ -71,8 +71,13 @@ protected:
 	void ChangeNextWeapon();
 	void ChangePreviousWeapon();
 
+	void FocusEnemy();
+
 public:
 	AControlledCharacter();
+
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
 
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }

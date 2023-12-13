@@ -68,14 +68,11 @@ void AMeleeWeapon::BeginPlay() {
 	FRotator rotation = FRotationMatrix::MakeFromZ(end - start).Rotator();
 
 	WeaponLength = (end - start).Size();
-	GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, FString::SanitizeFloat(WeaponLength));
 
 	if (IsValid(WeaponFXSystem)) {
 		WeaponFXComponent = UNiagaraFunctionLibrary::SpawnSystemAttached(WeaponFXSystem, WeaponMeshComponent, "NiagaraSystem",
 			fxLoc, rotation, EAttachLocation::KeepWorldPosition, false, false, ENCPoolMethod::None, true);
 		WeaponFXComponent->SetFloatParameter("trail_width", WeaponLength);
-	}
-	else {
 	}
 }
 

@@ -3,11 +3,15 @@
 
 #include "ControlledCharacter.h"
 
+#include "../Enemy/BaseEnemy.h"
 #include "Camera/CameraComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
+#include "Kismet/KismetSystemLibrary.h"
+#include "Kismet/KismetMathLibrary.h"
 
 // Sets default values
 AControlledCharacter::AControlledCharacter() {
@@ -34,6 +38,17 @@ void AControlledCharacter::BeginPlay() {
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer())) {
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
+	}
+}
+
+void AControlledCharacter::Tick(float DeltaTime) {
+	if (bFocusing && FocusedTarget) {
+		FRotator targetRot = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), FocusedTarget->GetActorLocation());
+		FRotator interpRot = FMath::RInterpTo(GetActorRotation(), targetRot, DeltaTime, 2.f);
+		FRotator controlRot = GetController()->GetControlRotation();
+
+		//preserve player input X and Y rotation
+		GetController()->SetControlRotation(UKismetMathLibrary::MakeRotator(controlRot.Roll, controlRot.Pitch, interpRot.Yaw));
 	}
 }
 
@@ -134,4 +149,25 @@ void AControlledCharacter::ChangeNextWeapon() {
 
 void AControlledCharacter::ChangePreviousWeapon() {
 	EquipWeapon((EquipedWeaponIndex - 1) % AvailableWeapons.Num());
+}
+
+void AControlledCharacter::FocusEnemy() {
+	float Range = 500.f;
+	const TArray<AActor*> ignored;
+	TArray<FHitResult> result;
+	FVector forwardVec = FollowCamera->GetForwardVector() * FVector(4000.f, 4000.f, 1.f) + GetActorLocation();
+	float sphereRad = 1000.f;
+
+	//trace from actor location -> direction of camera's forward vector
+	UKismetSystemLibrary::SphereTraceMulti(GetWorld(), GetActorLocation(), forwardVec, sphereRad, UEngineTypes::ConvertToTraceType(ECC_Pawn), false, ignored, EDrawDebugTrace::ForDuration, result, true);
+	for (size_t i = 0; i < result.Num(); i++) {
+		ABaseEnemy* target = Cast<ABaseEnemy>(result[i].GetActor());
+		if (IsValid(target)) {
+			FocusedTarget = target;
+			bFocusing = !bFocusing;
+			GetCharacterMovement()->bOrientRotationToMovement = !bFocusing;
+			GetCharacterMovement()->bUseControllerDesiredRotation = bFocusing;
+			break;
+		}
+	}
 }
