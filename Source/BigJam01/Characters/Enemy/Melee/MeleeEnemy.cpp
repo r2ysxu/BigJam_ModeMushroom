@@ -79,6 +79,7 @@ void AMeleeEnemy::AttackChain() {
 		FAttackChain* AttackChain = &AttackChains[SelectedChain];
 		if (AttackIndex >= AttackChain->Attacks.Num()) {
 			ClearAttacks();
+			GetWorld()->GetTimerManager().SetTimer(InitiateAttackHandler, this, &AMeleeEnemy::InitiateMeleeAttack, RecoveryDelay, false);
 		} else {
 			SingleAttack(AttackChain->Attacks[AttackIndex++]);
 		}
@@ -87,7 +88,8 @@ void AMeleeEnemy::AttackChain() {
 
 void AMeleeEnemy::OnFlinchRecover() {
 	bFlinching = false;
-	GetWorld()->GetTimerManager().PauseTimer(InitiateAttackHandler);
+	GetWorld()->GetTimerManager().ClearTimer(SingleAttackHandler);
+	InitiateMeleeAttack();
 }
 
 void AMeleeEnemy::OnDashStop() {
@@ -106,7 +108,7 @@ void AMeleeEnemy::OnWithinMeleeRange(UPrimitiveComponent* OverlappedComponent, A
 	if (actor == this || bFlinching) return;
 	AMainCharacter* mc = Cast<AMainCharacter>(actor);
 	if (IsValid(mc)) {
-		GetWorld()->GetTimerManager().SetTimer(InitiateAttackHandler, this, &AMeleeEnemy::InitiateMeleeAttack, ATTACK_DELAY, true, INITIAL_ATTACK_DELAY);
+		InitiateMeleeAttack();
 	}
 }
 
@@ -137,14 +139,12 @@ float AMeleeEnemy::OnHitByOpponent(float Damage, EStatusDebuffType Status) {
 	ClearAttacks();
 	if (FlinchMontage) {
 		float animationDelay = PlayAnimMontage(FlinchMontage);
-		GetWorld()->GetTimerManager().PauseTimer(InitiateAttackHandler);
 		GetWorld()->GetTimerManager().SetTimer(FlinchHandler, this, &AMeleeEnemy::OnFlinchRecover, animationDelay, false);
 	}
 	return Super::OnHitByOpponent(Damage, Status);
 }
 
 void AMeleeEnemy::DashForward() {
-	ClearAttacks();
 	if (DashFwdMontage) {
 		GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Yellow, TEXT("DashF"));
 		bDashing = true;
@@ -154,7 +154,6 @@ void AMeleeEnemy::DashForward() {
 }
 
 void AMeleeEnemy::DashBack() {
-	ClearAttacks();
 	if (DashBackMontage) {
 		bDashing = true;
 		float animationDelay = PlayAnimMontage(DashBackMontage);

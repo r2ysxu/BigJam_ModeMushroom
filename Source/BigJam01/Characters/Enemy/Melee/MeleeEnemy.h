@@ -29,8 +29,7 @@ class BIGJAM01_API AMeleeEnemy : public ABaseEnemy {
 	GENERATED_BODY()
 
 private:
-	const float ATTACK_DELAY = 2.f;
-	const float INITIAL_ATTACK_DELAY = 1.f;
+	const float ATTACK_DELAY = .5f;
 	const FName WeaponSocket = FName("weapon");
 
 	class AMeleeEnemyController* AiController;
@@ -64,6 +63,8 @@ protected:
 	TArray<FAttackChain> AttackChains;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack")
 	class UBoxComponent* MeleeWeaponBox;
+	UPROPERTY(EditAnywhere, BLueprintReadWrite, Category = "Attack")
+	float RecoveryDelay = 1.f;
 
 	UFUNCTION() void OnWithinMeleeRange(UPrimitiveComponent* OverlappedComponent, AActor* actor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	UFUNCTION() void OnOutsideMeleeRange(UPrimitiveComponent* OverlappedComponent, AActor* actor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex);
