@@ -4,11 +4,14 @@
 #include "MeleeEnemy.h"
 #include "../../Main/MainCharacter.h"
 #include "../../ActorComponents/DebuffComponent.h"
+#include "MeleeEnemyController.h"
 
 #include "Components/BoxComponent.h"
 #include "Components/SphereComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/SplineComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 
 // Sets default values
 AMeleeEnemy::AMeleeEnemy() {
@@ -31,6 +34,10 @@ AMeleeEnemy::AMeleeEnemy() {
 
 }
 
+void AMeleeEnemy::SetAiController(AMeleeEnemyController* MEController) {
+	AiController = MEController;
+}
+
 bool AMeleeEnemy::CheckAlive() {
 	if (Health <= 0) {
 		GetMesh()->SetCollisionProfileName(FName("Ragdoll"));
@@ -39,6 +46,10 @@ bool AMeleeEnemy::CheckAlive() {
 		GetCapsuleComponent()->DestroyComponent();
 	}
 	return Super::CheckAlive();
+}
+
+void AMeleeEnemy::NextMoveLocation(FVector Path) {
+	AiController->RoamTo(Path);
 }
 
 // Called when the game starts or when spawned

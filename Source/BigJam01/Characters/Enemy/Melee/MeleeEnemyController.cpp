@@ -18,7 +18,8 @@ AMeleeEnemyController::AMeleeEnemyController() {
 void AMeleeEnemyController::OnPossess(APawn* InPawn) {
 	Super::OnPossess(InPawn);
 	Owner = Cast<AMeleeEnemy>(InPawn);
-	GetWorld()->GetTimerManager().SetTimer(RoutineHandler, this, &AMeleeEnemyController::Routine, 0.1f, true);
+	Owner->SetAiController(this);
+	GetWorld()->GetTimerManager().SetTimer(RoutineHandler, this, &AMeleeEnemyController::Routine, 0.05f, true);
 }
 
 void AMeleeEnemyController::InitializeAIPerceptionSight() {
@@ -46,21 +47,33 @@ ETeamAttitude::Type AMeleeEnemyController::GetTeamAttitudeTowards(const AActor& 
 	return ETeamAttitude::Neutral;
 }
 
-
 void AMeleeEnemyController::PawnDetected(const TArray<AActor*>& DetectedPawns) {
 	for (int i = 0; i < DetectedPawns.Num(); i++) {
 		AMainCharacter* mc = Cast<AMainCharacter>(DetectedPawns[i]);
 		if (IsValid(mc) && Target == nullptr) {
 			Target = mc;
+			State = EMeleeEnemyState::VE_Chasing;
 			break;
 		}
 	}
 }
 
+void AMeleeEnemyController::RoamTo(FVector Location) {
+	if (State == EMeleeEnemyState::VE_Roaming) {
+		MoveToLocation(Location);
+	}
+}
+
 void AMeleeEnemyController::Routine() {
-	if (Owner->GetIsAttacking()) {
-		StopMovement();
-	} else if (IsValid(Target)) {
-		MoveToActor(Target);
+	switch (State) {
+	case EMeleeEnemyState::VE_Roaming:
+		break;
+	case EMeleeEnemyState::VE_Chasing:
+		if (Owner->GetIsAttacking() || Owner->GetIsSleeping()) {
+			StopMovement();
+		} else if (IsValid(Target)) {
+			MoveToActor(Target);
+		}
+		break;
 	}
 }

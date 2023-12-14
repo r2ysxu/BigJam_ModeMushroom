@@ -33,6 +33,8 @@ private:
 	const float INITIAL_ATTACK_DELAY = 1.f;
 	const FName WeaponSocket = FName("weapon");
 
+	class AMeleeEnemyController* AiController;
+
 	FTimerHandle InitiateAttackHandler;
 	FTimerHandle SingleAttackHandler;
 	FTimerHandle FlinchHandler;
@@ -69,7 +71,9 @@ protected:
 public:
 	AMeleeEnemy();
 
+	void SetAiController(class AMeleeEnemyController* MEController);
 	virtual bool CheckAlive() override;
 	UFUNCTION(BlueprintCallable) bool GetIsAttacking() { return bAttacking; }
+	UFUNCTION(BlueprintCallable) void NextMoveLocation(FVector Path);
 	virtual float OnHitByOpponent(float Damage, EStatusDebuffType Status) override;
 };
