@@ -22,7 +22,11 @@ class BIGJAM01_API AMeleeEnemyController : public AAIController {
 	GENERATED_BODY()
 
 private:
+	const float SightRange = 1000.f;
+	const float DashCooldownRate = 2.f;
+
 	FTimerHandle RoutineHandler;
+	FTimerHandle DashCooldownHandler;
 
 	void InitializeAIPerceptionSight();
 
@@ -30,7 +34,9 @@ protected:
 	class AMeleeEnemy* Owner;
 	class AMainCharacter* Target = nullptr;
 	EMeleeEnemyState State = EMeleeEnemyState::VE_Roaming;
+	bool bDashCoolDown = false;
 
+	void OnDashCooldown();
 	virtual ETeamAttitude::Type GetTeamAttitudeTowards(const AActor& Other) const override;
 
 public:

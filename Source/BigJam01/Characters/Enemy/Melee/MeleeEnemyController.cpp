@@ -19,12 +19,12 @@ void AMeleeEnemyController::OnPossess(APawn* InPawn) {
 	Super::OnPossess(InPawn);
 	Owner = Cast<AMeleeEnemy>(InPawn);
 	Owner->SetAiController(this);
-	GetWorld()->GetTimerManager().SetTimer(RoutineHandler, this, &AMeleeEnemyController::Routine, 0.05f, true);
+	GetWorld()->GetTimerManager().SetTimer(RoutineHandler, this, &AMeleeEnemyController::Routine, 0.1f, true);
 }
 
 void AMeleeEnemyController::InitializeAIPerceptionSight() {
 	UAISenseConfig_Sight* SightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("MeleeEnemySightConfig"));
-	SightConfig->SightRadius = 1000.f;
+	SightConfig->SightRadius = SightRange;
 	SightConfig->LoseSightRadius = SightConfig->SightRadius + 100.f;
 	SightConfig->PeripheralVisionAngleDegrees = 360.f;
 	SightConfig->SetMaxAge(5.f);
@@ -35,6 +35,10 @@ void AMeleeEnemyController::InitializeAIPerceptionSight() {
 
 	GetPerceptionComponent()->SetDominantSense(*SightConfig->GetSenseImplementation());
 	GetPerceptionComponent()->ConfigureSense(*SightConfig);
+}
+
+void AMeleeEnemyController::OnDashCooldown() {
+	bDashCoolDown = false;
 }
 
 ETeamAttitude::Type AMeleeEnemyController::GetTeamAttitudeTowards(const AActor& Other) const {
@@ -71,8 +75,16 @@ void AMeleeEnemyController::Routine() {
 	case EMeleeEnemyState::VE_Chasing:
 		if (Owner->GetIsAttacking() || Owner->GetIsSleeping()) {
 			StopMovement();
-		} else if (IsValid(Target)) {
-			MoveToActor(Target);
+		} else if (IsValid(Target) && !Owner->GetIsDashing()) {
+			float distance = Owner->GetDistanceTo(Target);
+			float dashChance = FMath::SRand() + distance / SightRange;
+			if (!bDashCoolDown && dashChance > 0.75) {
+				bDashCoolDown = true;
+				Owner->DashForward();
+				if (!bDashCoolDown) GetWorld()->GetTimerManager().SetTimer(DashCooldownHandler, this, &AMeleeEnemyController::OnDashCooldown, DashCooldownRate, false);
+			} else {
+				MoveToActor(Target);
+			}
 		}
 		break;
 	}

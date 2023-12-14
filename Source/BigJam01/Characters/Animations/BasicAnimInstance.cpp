@@ -6,7 +6,9 @@
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
-void UBasicAnimInstance::NativeInitializeAnimation() {}
+void UBasicAnimInstance::NativeInitializeAnimation() {
+	SetRootMotionMode(ERootMotionMode::RootMotionFromMontagesOnly);
+}
 
 void UBasicAnimInstance::NativeUpdateAnimation(float DeltaSeconds) {
 	if (IsValid(GetOwner())) {

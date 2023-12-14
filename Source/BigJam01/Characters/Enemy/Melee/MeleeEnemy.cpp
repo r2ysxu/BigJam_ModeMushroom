@@ -90,6 +90,10 @@ void AMeleeEnemy::OnFlinchRecover() {
 	GetWorld()->GetTimerManager().PauseTimer(InitiateAttackHandler);
 }
 
+void AMeleeEnemy::OnDashStop() {
+	bDashing = false;
+}
+
 void AMeleeEnemy::SingleAttack(EMeleeAttackType AttackType) {
 	if (AttackMontages[(uint8)AttackType]) {
 		bAttackSwing = true;
@@ -108,6 +112,7 @@ void AMeleeEnemy::OnWithinMeleeRange(UPrimitiveComponent* OverlappedComponent, A
 
 void AMeleeEnemy::OnOutsideMeleeRange(UPrimitiveComponent* OverlappedComponent, AActor* actor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex) {
 	if (actor == this) return;
+	ClearAttacks();
 	GetWorld()->GetTimerManager().ClearTimer(InitiateAttackHandler);
 }
 
@@ -136,4 +141,27 @@ float AMeleeEnemy::OnHitByOpponent(float Damage, EStatusDebuffType Status) {
 		GetWorld()->GetTimerManager().SetTimer(FlinchHandler, this, &AMeleeEnemy::OnFlinchRecover, animationDelay, false);
 	}
 	return Super::OnHitByOpponent(Damage, Status);
+}
+
+void AMeleeEnemy::DashForward() {
+	ClearAttacks();
+	if (DashFwdMontage) {
+		GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Yellow, TEXT("DashF"));
+		bDashing = true;
+		float animationDelay = PlayAnimMontage(DashFwdMontage);
+		GetWorld()->GetTimerManager().SetTimer(DashHandler, this, &AMeleeEnemy::OnDashStop, animationDelay, false);
+	}
+}
+
+void AMeleeEnemy::DashBack() {
+	ClearAttacks();
+	if (DashBackMontage) {
+		bDashing = true;
+		float animationDelay = PlayAnimMontage(DashBackMontage);
+		GetWorld()->GetTimerManager().SetTimer(DashHandler, this, &AMeleeEnemy::OnDashStop, animationDelay, false);
+	}
+}
+
+bool AMeleeEnemy::GetIsDashing() {
+	return bDashing;
 }

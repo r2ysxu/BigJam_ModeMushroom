@@ -38,11 +38,13 @@ private:
 	FTimerHandle InitiateAttackHandler;
 	FTimerHandle SingleAttackHandler;
 	FTimerHandle FlinchHandler;
+	FTimerHandle DashHandler;
 	uint8 SelectedChain = 0;
 	uint8 AttackIndex = 0;
 
 	volatile bool bAttackSwing = false;
 	volatile bool bFlinching = false;
+	volatile bool bDashing = false;
 
 	void SingleAttack(EMeleeAttackType AttackType);
 	void ClearAttacks();
@@ -54,6 +56,10 @@ protected:
 	TArray<class UAnimMontage*> AttackMontages;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
 	class UAnimMontage* FlinchMontage;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
+	class UAnimMontage* DashFwdMontage;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
+	class UAnimMontage* DashBackMontage;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack")
 	TArray<FAttackChain> AttackChains;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack")
@@ -67,6 +73,7 @@ protected:
 	void PerformAttack();
 	void AttackChain();
 	void OnFlinchRecover();
+	void OnDashStop();
 
 public:
 	AMeleeEnemy();
@@ -76,4 +83,7 @@ public:
 	UFUNCTION(BlueprintCallable) bool GetIsAttacking() { return bAttacking; }
 	UFUNCTION(BlueprintCallable) void NextMoveLocation(FVector Path);
 	virtual float OnHitByOpponent(float Damage, EStatusDebuffType Status) override;
+	void DashForward();
+	void DashBack();
+	bool GetIsDashing();
 };
