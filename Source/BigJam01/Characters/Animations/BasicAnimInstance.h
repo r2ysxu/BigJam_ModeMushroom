@@ -20,12 +20,14 @@ protected:
 	float GroundSpeed;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement)
 	bool IsFalling;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement)
+	bool IsDead;
 	
 public:
 	virtual void NativeInitializeAnimation() override;
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 
-	virtual class ACharacter* GetOwner();
+	virtual class ABaseCharacter* GetOwner();
 	UFUNCTION(BlueprintCallable) FORCEINLINE FVector GetVelocity() { return Velocity; }
 	UFUNCTION(BlueprintCallable) FORCEINLINE float GetGroundSpeed() { return GroundSpeed; }
 	UFUNCTION(BlueprintCallable) bool GetShouldMove();

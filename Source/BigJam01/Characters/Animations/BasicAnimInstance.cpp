@@ -2,6 +2,7 @@
 
 
 #include "BasicAnimInstance.h"
+#include "../../Characters/BaseCharacter.h"
 
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -15,11 +16,12 @@ void UBasicAnimInstance::NativeUpdateAnimation(float DeltaSeconds) {
 		Velocity = GetOwner()->GetMovementComponent()->Velocity;
 		IsFalling = GetOwner()->GetMovementComponent()->IsFalling();
 		GroundSpeed = static_cast<float>(Velocity.Length());
+		IsDead = !GetOwner()->GetIsAlive();
 	}
 }
 
-ACharacter* UBasicAnimInstance::GetOwner() {
-	return Cast<ACharacter>(TryGetPawnOwner());
+ABaseCharacter* UBasicAnimInstance::GetOwner() {
+	return Cast<ABaseCharacter>(TryGetPawnOwner());
 }
 
 bool UBasicAnimInstance::GetShouldMove() {

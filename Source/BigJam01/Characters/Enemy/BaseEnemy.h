@@ -29,7 +29,6 @@ protected:
 	TSubclassOf<class UEnemyHUD> EnemyHudClass;
 	class UEnemyHUD* EnemyHud;
 	
-	bool bAlive = true;
 	bool bSleeping = false;
 
 	// Called when the game starts or when spawned
@@ -42,7 +41,6 @@ public:
 	virtual void TakeHitDamage(float Damage);
 	virtual float OnHitByOpponent(float Damage, enum EStatusDebuffType Status) override;
 	FORCEINLINE virtual uint8 GetTeam() { return 2; }
-	FORCEINLINE bool GetIsAlive() { return bAlive; }
 	FORCEINLINE bool GetIsSleeping() { return bSleeping; }
 	void SetIsSleeping(bool IsSleeping);
 	void ShowHud();

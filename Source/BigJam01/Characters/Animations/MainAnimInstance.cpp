@@ -22,7 +22,7 @@ void UMainAnimInstance::NativeUpdateAnimation(float DeltaSeconds) {
 	}
 }
 
-ACharacter* UMainAnimInstance::GetOwner() {
+ABaseCharacter* UMainAnimInstance::GetOwner() {
 	return Owner;
 }
 
