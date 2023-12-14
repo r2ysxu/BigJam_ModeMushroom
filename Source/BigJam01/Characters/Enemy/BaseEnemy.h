@@ -13,6 +13,9 @@ UCLASS(Abstract)
 class BIGJAM01_API ABaseEnemy : public ABaseCharacter {
 	GENERATED_BODY()
 
+private:
+	FTimerHandle UpdateHudHander;
+
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UDebuffComponent* DebuffComponent;
@@ -38,4 +41,6 @@ public:
 	FORCEINLINE bool GetIsAlive() { return bAlive; }
 	FORCEINLINE bool GetIsSleeping() { return bSleeping; }
 	void SetIsSleeping(bool IsSleeping);
+	void ShowHud();
+	void UpdateHud();
 };
