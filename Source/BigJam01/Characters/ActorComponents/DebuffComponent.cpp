@@ -4,6 +4,9 @@
 #include "DebuffComponent.h"
 #include "../Enemy/BaseEnemy.h"
 
+#include "NiagaraComponent.h"
+#include "NiagaraFunctionLibrary.h"
+
 // Sets default values for this component's properties
 UDebuffComponent::UDebuffComponent() {
 	PrimaryComponentTick.bCanEverTick = false;
@@ -49,6 +52,7 @@ float UDebuffComponent::ConsumeMarkDebuff() {
 	case EMarkDebuffType::VE_LL: 
 		CurrentDoTDamage = TotalDoTDamage;
 		GetWorld()->GetTimerManager().SetTimer(DotHandler, this, &UDebuffComponent::ApplyDoT, 0.5f, true);
+		if (ProcSplatterFX) UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), ProcSplatterFX, Owner->GetActorLocation());
 		CurrentMark = EMarkDebuffType::VE_NONE;
 		break;
 	case EMarkDebuffType::VE_LR:
