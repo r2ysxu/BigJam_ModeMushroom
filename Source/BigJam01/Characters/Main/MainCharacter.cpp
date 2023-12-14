@@ -4,6 +4,7 @@
 #include "../ActorComponents/ComboComponent.h"
 #include "../ActorComponents/DirectionalAttackComponent.h"
 #include "../ActorComponents/ChargeAttackComponent.h"
+#include "../ActorComponents/EnemyReactionComponent.h"
 #include "../../Weapons/Melee/MeleeWeapon.h"
 #include "../../Widgets/HUDs/ComboHUD.h"
 #include "../../Widgets/HUDs/PlayerStatHUD.h"
@@ -49,10 +50,15 @@ AMainCharacter::AMainCharacter() {
 	ComboComponet = CreateDefaultSubobject<UComboComponent>(TEXT("ComboAttackComponent"));
 	DaoComponet = CreateDefaultSubobject<UDirectionalAttackComponent>(TEXT("DirectionalAttackComponent"));
 	ChargeComponent = CreateDefaultSubobject<UChargeAttackComponent>(TEXT("ChargeAttackComponent"));
+	EnemyReactionComponent = CreateDefaultSubobject<UEnemyReactionComponent>(TEXT("EnemyReactionComponent"));
 }
 
 UComboComponent* AMainCharacter::GetComboComponent() {
 	return ComboComponet;
+}
+
+UEnemyReactionComponent* AMainCharacter::GetEnemyReactionComponent() {
+	return EnemyReactionComponent;
 }
 
 void AMainCharacter::BeginPlay() {
@@ -126,6 +132,7 @@ void AMainCharacter::InitiateAttack(EAttackType AttackType) {
 			ChargeComponent->InitiateAttack(AttackType);
 			break;
 		}
+		EnemyReactionComponent->NotifyDodge();
 	}
 }
 

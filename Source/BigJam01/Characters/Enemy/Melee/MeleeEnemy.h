@@ -65,6 +65,8 @@ protected:
 	class UBoxComponent* MeleeWeaponBox;
 	UPROPERTY(EditAnywhere, BLueprintReadWrite, Category = "Attack")
 	float RecoveryDelay = 1.f;
+	UPROPERTY(EditAnywhere, BLueprintReadWrite, Category = "Attack")
+	float DodgeChance = 0.5f;
 
 	UFUNCTION() void OnWithinMeleeRange(UPrimitiveComponent* OverlappedComponent, AActor* actor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	UFUNCTION() void OnOutsideMeleeRange(UPrimitiveComponent* OverlappedComponent, AActor* actor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex);

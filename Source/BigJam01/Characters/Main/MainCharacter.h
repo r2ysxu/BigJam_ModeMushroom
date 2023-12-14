@@ -51,6 +51,8 @@ protected:
 	class ABaseEnemy* FocusedTarget = nullptr;
 	class ABaseCharacter* LastHitEnemy;
 
+	class UEnemyReactionComponent* EnemyReactionComponent;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Stats")
 	float Stamina = 1.f;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Stats")
@@ -110,5 +112,6 @@ public:
 	FORCEINLINE UFUNCTION(BlueprintCallable) float GetStamina();
 	UFUNCTION(BlueprintCallable) bool DrainStamina(float Value);
 	UFUNCTION(BlueprintCallable) class UComboComponent* GetComboComponent();
+	class UEnemyReactionComponent* GetEnemyReactionComponent();
 
 };

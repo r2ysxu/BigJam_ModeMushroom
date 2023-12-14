@@ -4,6 +4,7 @@
 #include "MeleeEnemyController.h"
 #include "MeleeEnemy.h"
 #include "../../Main/MainCharacter.h"
+#include "../../ActorComponents/EnemyReactionComponent.h"
 
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISenseConfig_Sight.h"
@@ -57,6 +58,7 @@ void AMeleeEnemyController::PawnDetected(const TArray<AActor*>& DetectedPawns) {
 		if (IsValid(mc) && Target == nullptr) {
 			Target = mc;
 			State = EMeleeEnemyState::VE_Chasing;
+			Target->GetEnemyReactionComponent()->Subscribe(Owner);
 			break;
 		}
 	}

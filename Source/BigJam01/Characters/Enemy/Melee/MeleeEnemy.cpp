@@ -146,7 +146,6 @@ float AMeleeEnemy::OnHitByOpponent(float Damage, EStatusDebuffType Status) {
 
 void AMeleeEnemy::DashForward() {
 	if (DashFwdMontage) {
-		GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Yellow, TEXT("DashF"));
 		bDashing = true;
 		float animationDelay = PlayAnimMontage(DashFwdMontage);
 		GetWorld()->GetTimerManager().SetTimer(DashHandler, this, &AMeleeEnemy::OnDashStop, animationDelay, false);
@@ -154,7 +153,7 @@ void AMeleeEnemy::DashForward() {
 }
 
 void AMeleeEnemy::DashBack() {
-	if (DashBackMontage) {
+	if (DashBackMontage && FMath::SRand() >= DodgeChance) {
 		bDashing = true;
 		float animationDelay = PlayAnimMontage(DashBackMontage);
 		GetWorld()->GetTimerManager().SetTimer(DashHandler, this, &AMeleeEnemy::OnDashStop, animationDelay, false);

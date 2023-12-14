@@ -30,6 +30,9 @@ void ABaseEnemy::BeginPlay() {
 }
 
 bool ABaseEnemy::CheckAlive() {
+	if (Health <= 0) {
+		bAlive = false;
+	}
 	return Health > 0;
 }
 
