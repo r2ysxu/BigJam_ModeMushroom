@@ -59,7 +59,7 @@ void AMeleeEnemyController::PawnDetected(const TArray<AActor*>& DetectedPawns) {
 			Target = mc;
 			State = EMeleeEnemyState::VE_Chasing;
 			Target->GetEnemyReactionComponent()->Subscribe(Owner);
-			Owner->ShowHud();
+			Owner->OnStartChasing();
 			break;
 		}
 	}

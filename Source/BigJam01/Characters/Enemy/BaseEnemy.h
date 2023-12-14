@@ -17,6 +17,10 @@ private:
 	FTimerHandle UpdateHudHander;
 
 protected:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "AI")
+	float RoamSpeed = 100.f;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "AI")
+	float ChaseSpeed = 250.f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UDebuffComponent* DebuffComponent;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HUD")
