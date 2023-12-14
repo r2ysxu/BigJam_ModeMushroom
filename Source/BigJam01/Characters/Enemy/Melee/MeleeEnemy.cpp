@@ -40,6 +40,7 @@ void AMeleeEnemy::SetAiController(AMeleeEnemyController* MEController) {
 
 bool AMeleeEnemy::CheckAlive() {
 	if (Health <= 0) {
+		ClearAttacks();
 		GetMesh()->SetCollisionProfileName(FName("Ragdoll"));
 		GetMesh()->SetSimulatePhysics(true);
 		GetMovementComponent()->Deactivate();
