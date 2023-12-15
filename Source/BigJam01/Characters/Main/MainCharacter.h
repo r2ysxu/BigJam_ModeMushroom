@@ -57,6 +57,9 @@ protected:
 	float Stamina = 1.f;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Stats")
 	float StaminaRegenRate = .1f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
+	float DodgeStaminaDrain = 0.2f;
+
 	UPROPERTY(EditAnywhere, BLueprintReadWrite, Category = "Weapons")
 	TArray<FSpawnMeleeWeapon> EquippableWeaponClasses;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapons")

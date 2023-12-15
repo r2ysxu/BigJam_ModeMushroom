@@ -17,7 +17,8 @@ private:
 	class AMainCharacter* Owner;
 
 protected:
-	const float StaminaDrainPerAttack = 0.25f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
+	float StaminaDrainPerAttack = 0.1f;
 
 	FTimerHandle OnChargeUpHandle;
 

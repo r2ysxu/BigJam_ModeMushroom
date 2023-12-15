@@ -220,7 +220,7 @@ void AMainCharacter::AttackE() {
 }
 
 void AMainCharacter::DodgeRoll() {
-	if (DodgeMontage && !bRolling && !GetMovementComponent()->IsFalling() && bRollWindowOpen) {
+	if (DodgeMontage && !bRolling && !GetMovementComponent()->IsFalling() && bRollWindowOpen && DrainStamina(DodgeStaminaDrain)) {
 		bRolling = true;
 		GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, TEXT("Dodging"));
 		float animationDelay = PlayAnimMontage(DodgeMontage);

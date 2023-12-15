@@ -22,11 +22,12 @@ class BIGJAM01_API UDirectionalAttackComponent : public UBaseAttackComponent {
 	GENERATED_BODY()
 
 private:
-	const float StaminaDrainPerAttack = .20f;
-
 	int CurrentAttackIndex = 0;
 
 protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
+	float StaminaDrainPerAttack = .1f;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
 	TArray<class UAnimMontage*> FrontAttackMontages;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)

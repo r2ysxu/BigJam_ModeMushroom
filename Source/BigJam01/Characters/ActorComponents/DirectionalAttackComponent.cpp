@@ -33,12 +33,12 @@ bool UDirectionalAttackComponent::IsAttackChainable(EAttackType CurrentAttack) {
 
 void UDirectionalAttackComponent::InitiateAttack(EAttackType AttackType) {
 	UAnimMontage* montage = nullptr;
-	if (AttackType == EAttackType::VE_Q) {
+	if (AttackType == EAttackType::VE_Q && Owner->DrainStamina(StaminaDrainPerAttack)) {
 		bAttackWindowOpen = false;
 		montage = LeftAttackMontages[CurrentAttackIndex];
 		CurrentAttackIndex = (CurrentAttackIndex + 1) % LeftAttackMontages.Num();
 	}
-	else if (AttackType == EAttackType::VE_E) {
+	else if (AttackType == EAttackType::VE_E && Owner->DrainStamina(StaminaDrainPerAttack)) {
 		bAttackWindowOpen = false;
 		montage = RightAttackMontages[CurrentAttackIndex];
 		CurrentAttackIndex = (CurrentAttackIndex + 1) % RightAttackMontages.Num();
