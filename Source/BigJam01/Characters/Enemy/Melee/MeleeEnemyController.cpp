@@ -78,7 +78,7 @@ void AMeleeEnemyController::Routine() {
 	case EMeleeEnemyState::VE_Chasing:
 		if (Owner->GetIsAttacking() || Owner->GetIsSleeping()) {
 			StopMovement();
-		} else if (IsValid(Target) && !Owner->GetIsDashing()) {
+		} else if (IsValid(Target) && !Owner->GetIsDashing() && !Owner->GetInAnimLock()) {
 			float distance = Owner->GetDistanceTo(Target);
 			float dashChance = FMath::SRand() + distance / SightRange;
 			if (!bDashCoolDown && dashChance > 0.75) {

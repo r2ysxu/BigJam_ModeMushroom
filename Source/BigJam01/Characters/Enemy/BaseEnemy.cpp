@@ -62,3 +62,11 @@ void ABaseEnemy::UpdateHud() {
 	FVector cameraLocation = UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0)->GetCameraLocation();
 	EnemyHudComponet->SetWorldRotation(UKismetMathLibrary::FindLookAtRotation(EnemyHudComponet->GetComponentLocation(), cameraLocation));
 }
+
+bool ABaseEnemy::GetInAnimLock() {
+	return bInAnimLock;
+}
+
+void ABaseEnemy::SetInAnimLock(bool bLock) {
+	bInAnimLock = bLock;
+}

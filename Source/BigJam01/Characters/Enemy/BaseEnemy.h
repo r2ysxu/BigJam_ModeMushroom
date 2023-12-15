@@ -30,6 +30,7 @@ protected:
 	class UEnemyHUD* EnemyHud;
 	
 	bool bSleeping = false;
+	volatile bool bInAnimLock = false;
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -40,6 +41,10 @@ public:
 	virtual bool CheckAlive() override;
 	virtual void TakeHitDamage(float Damage);
 	virtual float OnHitByOpponent(float Damage, enum EStatusDebuffType Status) override;
+
+	virtual void SetInAnimLock(bool bLock);
+	virtual bool GetInAnimLock();
+
 	FORCEINLINE virtual uint8 GetTeam() { return 2; }
 	FORCEINLINE bool GetIsSleeping() { return bSleeping; }
 	void SetIsSleeping(bool IsSleeping);

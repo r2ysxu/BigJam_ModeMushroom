@@ -63,7 +63,7 @@ void AMeleeEnemy::BeginPlay() {
 }
 
 void AMeleeEnemy::InitiateMeleeAttack() {
-	if (!bAttacking) {
+	if (!bAttacking and !bInAnimLock) {
 		bAttacking = true;
 		PerformAttack();
 	}
@@ -98,7 +98,7 @@ void AMeleeEnemy::OnDashStop() {
 }
 
 void AMeleeEnemy::SingleAttack(EMeleeAttackType AttackType) {
-	if (AttackMontages[(uint8)AttackType]) {
+	if (AttackMontages[(uint8)AttackType] && !bInAnimLock) {
 		bAttackSwing = true;
 		float animationDelay = PlayAnimMontage(AttackMontages[(uint8)AttackType]);
 		GetWorld()->GetTimerManager().SetTimer(SingleAttackHandler, this, &AMeleeEnemy::AttackChain, animationDelay, false);
@@ -146,7 +146,7 @@ float AMeleeEnemy::OnHitByOpponent(float Damage, EStatusDebuffType Status) {
 }
 
 void AMeleeEnemy::DashForward() {
-	if (DashFwdMontage) {
+	if (DashFwdMontage && !bInAnimLock) {
 		bDashing = true;
 		float animationDelay = PlayAnimMontage(DashFwdMontage);
 		GetWorld()->GetTimerManager().SetTimer(DashHandler, this, &AMeleeEnemy::OnDashStop, animationDelay, false);
@@ -154,7 +154,7 @@ void AMeleeEnemy::DashForward() {
 }
 
 void AMeleeEnemy::DashBack() {
-	if (DashBackMontage && FMath::SRand() >= ( 1.f - DodgeChance)) {
+	if (DashBackMontage && !bInAnimLock && FMath::SRand() >= ( 1.f - DodgeChance)) {
 		bDashing = true;
 		float animationDelay = PlayAnimMontage(DashBackMontage);
 		GetWorld()->GetTimerManager().SetTimer(DashHandler, this, &AMeleeEnemy::OnDashStop, animationDelay, false);

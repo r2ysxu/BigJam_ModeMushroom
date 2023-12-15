@@ -77,7 +77,6 @@ protected:
 	void AttackChain();
 	void OnFlinchRecover();
 	void OnDashStop();
-
 public:
 	AMeleeEnemy();
 
