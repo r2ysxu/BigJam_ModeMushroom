@@ -18,9 +18,8 @@ FString UOptionMenu::ResolutionPointToString(FIntPoint& Resolution) {
 }
 
 void UOptionMenu::InitializeGraphicSlider(USlider* Slider) {
-	Slider->SetMaxValue(4);
-	Slider->SetMinValue(0);
-	Slider->SetStepSize(1);
+	Slider->SetMaxValue(4.f);
+	Slider->SetMinValue(0.f);
 }
 
 void UOptionMenu::InitializeGraphicSettings() {
