@@ -32,6 +32,8 @@ private:
 	float ConsumeMarkDebuff();
 
 protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FX")
+	class UNiagaraSystem* ProcSplatterFX;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float DotPerInstance = 0.01;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

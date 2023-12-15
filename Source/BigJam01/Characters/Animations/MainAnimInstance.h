@@ -25,7 +25,7 @@ protected:
 	virtual void NativeInitializeAnimation() override;
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 
-	virtual class ACharacter* GetOwner() override;
+	virtual class ABaseCharacter* GetOwner() override;
 	UFUNCTION(BlueprintCallable) void NextAttackComboWindow();
 	UFUNCTION(BlueprintCallable) void ResetCombo();
 	UFUNCTION(BlueprintCallable) void DodgeWindowOpen();

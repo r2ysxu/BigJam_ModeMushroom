@@ -16,7 +16,8 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
 	EStatusDebuffType DebuffStatus;
-
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	bool bAlive = true;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Stats")
 	float Health = 1.f;
 
@@ -31,4 +32,5 @@ public:
 	virtual float OnHitByOpponent(float Damage, EStatusDebuffType Status) { return 0.f; }
 	FORCEINLINE virtual uint8 GetTeam() { return 0; }
 	FORCEINLINE virtual bool GetIsAttacking() { return bAttacking; }
+	FORCEINLINE bool GetIsAlive() { return bAlive; }
 };

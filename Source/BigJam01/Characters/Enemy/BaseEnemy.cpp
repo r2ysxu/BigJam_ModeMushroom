@@ -8,6 +8,8 @@
 
 #include "Components/WidgetComponent.h"
 #include "Blueprint/UserWidget.h"
+#include "Kismet/KismetMathLibrary.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ABaseEnemy::ABaseEnemy() {
@@ -26,6 +28,7 @@ void ABaseEnemy::BeginPlay() {
 	if (EnemyHud) {
 		EnemyHud->SetEnemy(this);
 		EnemyHudComponet->SetWidget(EnemyHud);
+		EnemyHudComponet->SetVisibility(false);
 	}
 }
 
@@ -48,4 +51,14 @@ float ABaseEnemy::OnHitByOpponent(float Damage, EStatusDebuffType Status) {
 
 void ABaseEnemy::SetIsSleeping(bool IsSleeping) {
 	bSleeping = IsSleeping;
+}
+
+void ABaseEnemy::ShowHud() {
+	EnemyHudComponet->SetVisibility(true);
+	GetWorld()->GetTimerManager().SetTimer(UpdateHudHander, this, &ABaseEnemy::UpdateHud, 0.1f, true);
+}
+
+void ABaseEnemy::UpdateHud() {
+	FVector cameraLocation = UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0)->GetCameraLocation();
+	EnemyHudComponet->SetWorldRotation(UKismetMathLibrary::FindLookAtRotation(EnemyHudComponet->GetComponentLocation(), cameraLocation));
 }

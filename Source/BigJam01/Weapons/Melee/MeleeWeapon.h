@@ -30,6 +30,10 @@ protected:
 	class UNiagaraSystem* WeaponFXSystem;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FX")
 	class UNiagaraComponent* WeaponFXComponent;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FX")
+	class UNiagaraSystem* PoisonSplatterFX;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FX")
+	class UNiagaraSystem* ToxinSplatterFX;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UBoxComponent* MeleeWeaponBox;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)

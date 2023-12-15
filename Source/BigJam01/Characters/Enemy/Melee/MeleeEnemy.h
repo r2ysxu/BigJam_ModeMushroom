@@ -89,4 +89,5 @@ public:
 	void DashForward();
 	void DashBack();
 	bool GetIsDashing();
+	void OnStartChasing();
 };

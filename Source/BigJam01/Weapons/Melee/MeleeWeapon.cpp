@@ -81,6 +81,9 @@ void AMeleeWeapon::OnWeaponMeleeHit(UPrimitiveComponent* OverlappedComponent, AA
 	ABaseCharacter* target = Cast<class ABaseCharacter>(actor);
 	if (IsValid(target) && target != LastHitEnemy) {
 		LastHitEnemy = target;
+		GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Yellow, FString::Printf(TEXT("%d"), CurrentEffect));
+		if (CurrentEffect == EStatusDebuffType::VE_POISON && PoisonSplatterFX) UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), PoisonSplatterFX, actor->GetActorLocation());
+		else if (CurrentEffect == EStatusDebuffType::VE_TOXIN && ToxinSplatterFX) UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), ToxinSplatterFX, actor->GetActorLocation());
 		Owner->OnHitTarget(target, BaseDamage, CurrentEffect);
 	}
 }

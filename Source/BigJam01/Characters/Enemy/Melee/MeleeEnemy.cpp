@@ -19,7 +19,7 @@ AMeleeEnemy::AMeleeEnemy() {
 	GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	GetCharacterMovement()->bOrientRotationToMovement = true;
-	GetCharacterMovement()->MaxWalkSpeed = 250.f;
+	GetCharacterMovement()->MaxWalkSpeed = RoamSpeed;
 
 	MeleeDetectionComponent = CreateDefaultSubobject<USphereComponent>(TEXT("MeleeDetectionBox"));
 	MeleeDetectionComponent->SetSphereRadius(50.f);
@@ -40,6 +40,7 @@ void AMeleeEnemy::SetAiController(AMeleeEnemyController* MEController) {
 
 bool AMeleeEnemy::CheckAlive() {
 	if (Health <= 0) {
+		ClearAttacks();
 		GetMesh()->SetCollisionProfileName(FName("Ragdoll"));
 		GetMesh()->SetSimulatePhysics(true);
 		GetMovementComponent()->Deactivate();
@@ -153,7 +154,7 @@ void AMeleeEnemy::DashForward() {
 }
 
 void AMeleeEnemy::DashBack() {
-	if (DashBackMontage && FMath::SRand() >= DodgeChance) {
+	if (DashBackMontage && FMath::SRand() >= ( 1.f - DodgeChance)) {
 		bDashing = true;
 		float animationDelay = PlayAnimMontage(DashBackMontage);
 		GetWorld()->GetTimerManager().SetTimer(DashHandler, this, &AMeleeEnemy::OnDashStop, animationDelay, false);
@@ -162,4 +163,9 @@ void AMeleeEnemy::DashBack() {
 
 bool AMeleeEnemy::GetIsDashing() {
 	return bDashing;
+}
+
+void AMeleeEnemy::OnStartChasing() {
+	GetCharacterMovement()->MaxWalkSpeed = ChaseSpeed;
+	ShowHud();
 }
