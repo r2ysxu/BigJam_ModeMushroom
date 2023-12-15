@@ -69,6 +69,8 @@ void UOptionMenu::ApplyGraphicSettings() {
 	int32 x = UKismetStringLibrary::Conv_StringToInt(resolution[0]);
 	int32 y = UKismetStringLibrary::Conv_StringToInt(resolution[1]);
 	settings->SetScreenResolution(FIntPoint(x, y));
+
+	settings->ApplySettings(true);
 }
 
 void UOptionMenu::CancelGraphicSettings() {
