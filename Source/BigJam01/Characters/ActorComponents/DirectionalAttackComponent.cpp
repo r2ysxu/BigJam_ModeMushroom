@@ -19,31 +19,26 @@ void UDirectionalAttackComponent::SetDirectionalMovement(FVector MovementVector)
 	//attack input while midair
 	if (FMath::Abs(MovementVector.Z) > 0.f){
 		LastMovement = EAttackSwingDirection::VE_J;
-	}
-	else if (FMath::Abs(MovementVector.Y) > FMath::Abs(MovementVector.X)) {
+	} else if (FMath::Abs(MovementVector.Y) > FMath::Abs(MovementVector.X)) {
 		LastMovement = EAttackSwingDirection::VE_F;
 	} else {
 		LastMovement = EAttackSwingDirection::VE_N;
 	}
 }
 
-bool UDirectionalAttackComponent::IsAttackChainable(EAttackType CurrentAttack) {
-	return true;
-}
-
 void UDirectionalAttackComponent::InitiateAttack(EAttackType AttackType) {
 	UAnimMontage* montage = nullptr;
-	if (AttackType == EAttackType::VE_Q && Owner->DrainStamina(StaminaDrainPerAttack)) {
+
+	if (!bAttackWindowOpen || Owner->GetIsDodging() || !Owner->DrainStamina(StaminaDrainPerAttack)) return;
+	if (AttackType == EAttackType::VE_Q) {
 		bAttackWindowOpen = false;
 		montage = LeftAttackMontages[CurrentAttackIndex];
 		CurrentAttackIndex = (CurrentAttackIndex + 1) % LeftAttackMontages.Num();
-	}
-	else if (AttackType == EAttackType::VE_E && Owner->DrainStamina(StaminaDrainPerAttack)) {
+	} else if (AttackType == EAttackType::VE_E) {
 		bAttackWindowOpen = false;
 		montage = RightAttackMontages[CurrentAttackIndex];
 		CurrentAttackIndex = (CurrentAttackIndex + 1) % RightAttackMontages.Num();
-	}
-	else if (AttackType == EAttackType::VE_L && IsAttackChainable(AttackType) && !Owner->GetIsDodging() && bAttackWindowOpen && Owner->DrainStamina(StaminaDrainPerAttack)) {
+	} else if (AttackType == EAttackType::VE_L) {
 		bAttackWindowOpen = false;
 		switch (LastMovement) {
 			case EAttackSwingDirection::VE_F:
@@ -55,6 +50,7 @@ void UDirectionalAttackComponent::InitiateAttack(EAttackType AttackType) {
 				CurrentAttackIndex = (CurrentAttackIndex + 1) % JumpAttackMontages.Num();
 				break;
 			case EAttackSwingDirection::VE_N:
+				OnAttackStop();
 			default: break;
 		}
 	}

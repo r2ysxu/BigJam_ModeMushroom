@@ -47,7 +47,6 @@ public:
 	UDirectionalAttackComponent();
 
 	void SetDirectionalMovement(FVector MovementVector);
-	bool IsAttackChainable(EAttackType CurrentAttack);
 	void InitiateAttack(EAttackType AttackType);
 	void SetAttackWindow(bool IsOpen);
 	void OnNextCombo();
