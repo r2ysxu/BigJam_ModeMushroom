@@ -18,23 +18,35 @@ UComboComponent::UComboComponent() {
 void UComboComponent::InitiateAttack(EAttackType AttackType) {
 	if (IsAttackChainable(AttackType) && bAttackWindowOpen && !Owner->GetIsDodging()) {
 		if (Owner->DrainStamina(StaminaDrainPerAttack)) {
-			bCanApplyDamage = true;
-			bAttackWindowOpen = false;
-			Owner->SetIsAttacking(true);
-			Owner->SetDodgeWindow(false);
+			UAnimMontage* montage = nullptr;
+
 			switch (AttackType) {
 			case EAttackType::VE_L: 
+				montage = LMontages[ComboIndex];
 				ApplyStatusToWeapon(EStatusDebuffType::VE_POISON);
 				break;
 			case EAttackType::VE_R:
+				montage = RMontages[ComboIndex];
 				ApplyStatusToWeapon(EStatusDebuffType::VE_TOXIN);
 				break;
 			}
-			float animationDelay = Owner->PlayAnimMontage(AttackMontages[(uint8)AttackType]);
-			GetWorld()->GetTimerManager().SetTimer(OnAttackHandler, this, &UComboComponent::OnAttackStop, animationDelay, false);
+			if (IsValid(montage)) {
+				bCanApplyDamage = true;
+				bAttackWindowOpen = false;
+				Owner->SetIsAttacking(true);
+				Owner->SetDodgeWindow(false);
+
+				float animationDelay = Owner->PlayAnimMontage(montage);
+				GetWorld()->GetTimerManager().SetTimer(OnAttackHandler, this, &UComboComponent::OnAttackStop, animationDelay, false);
+
+				ComboIndex = (ComboIndex + 1) % LMontages.Num(); //assume L and R montages always have equal number of anims
+			}
 		} else {
 			ComboNode = ComboChains;
 		}
+	}
+	else {
+		ComboIndex = 0;
 	}
 }
 

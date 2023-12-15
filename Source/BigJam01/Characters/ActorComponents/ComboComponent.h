@@ -21,8 +21,6 @@ class BIGJAM01_API UComboComponent : public UBaseAttackComponent {
 	GENERATED_BODY()
 
 private:
-	const float StaminaDrainPerAttack = .20f;
-
 	volatile bool bCanApplyDamage = false;
 	volatile bool bAttackWindowOpen = true;
 
@@ -33,8 +31,14 @@ private:
 protected:
 	struct FAttackComboNode* ComboChains;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
+	float StaminaDrainPerAttack = .05f;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
-	TArray<class UAnimMontage*> AttackMontages;
+	TArray<class UAnimMontage*> LMontages;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
+	TArray<class UAnimMontage*> RMontages;
+	volatile int ComboIndex = 0;
 
 	// Called when the game starts
 	virtual void BeginPlay() override;
