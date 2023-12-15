@@ -44,6 +44,6 @@ protected:
 
 public:
 
-	void ApplyGraphicSettings();
-	void CancelGraphicSettings();
+	UFUNCTION(BlueprintCallable) void ApplyGraphicSettings();
+	UFUNCTION(BlueprintCallable) void CancelGraphicSettings();
 };
