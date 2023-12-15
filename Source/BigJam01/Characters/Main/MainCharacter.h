@@ -61,6 +61,10 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
 	float DodgeStaminaDrain = 0.2f;
 
+	float MasterVolume = 1.f;
+	float BGMVolume = 1.f;
+	float SFXVolume = 1.f;
+
 	UPROPERTY(EditAnywhere, BLueprintReadWrite, Category = "Weapons")
 	TArray<FSpawnMeleeWeapon> EquippableWeaponClasses;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapons")
@@ -125,5 +129,10 @@ public:
 	UFUNCTION(BlueprintCallable) bool DrainStamina(float Value);
 	UFUNCTION(BlueprintCallable) class UComboComponent* GetComboComponent();
 	class UEnemyReactionComponent* GetEnemyReactionComponent();
+
+	FORCEINLINE float GetMasterVolume() { return MasterVolume; }
+	FORCEINLINE float GetBGMVolume() { return BGMVolume; }
+	FORCEINLINE float GetSFXVolume() { return SFXVolume; }
+	void SetVolumes(float Master, float Music, float Sfx);
 
 };

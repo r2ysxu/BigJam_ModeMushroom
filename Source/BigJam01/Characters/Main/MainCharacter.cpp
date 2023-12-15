@@ -63,6 +63,12 @@ UEnemyReactionComponent* AMainCharacter::GetEnemyReactionComponent() {
 	return EnemyReactionComponent;
 }
 
+void AMainCharacter::SetVolumes(float Master, float Music, float Sfx) {
+	MasterVolume = Master;
+	BGMVolume = Music;
+	SFXVolume = Sfx;
+}
+
 void AMainCharacter::BeginPlay() {
 	Super::BeginPlay();
 	SetupHUDs();

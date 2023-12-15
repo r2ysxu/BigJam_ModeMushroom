@@ -2,6 +2,7 @@
 
 
 #include "OptionMenu.h"
+#include "../../Characters/Main/MainCharacter.h"
 
 #include "Components/Button.h"
 #include "Components/ComboBoxString.h"
@@ -10,6 +11,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/KismetStringLibrary.h"
+#include "Kismet/GameplayStatics.h"
 #include "GameFramework/GameUserSettings.h"
 
 
@@ -55,6 +57,15 @@ void UOptionMenu::InitializeGraphicSettings() {
 	GraphicVsync->SetIsChecked(settings->IsVSyncEnabled());
 }
 
+void UOptionMenu::InitializeSoundSettings() {
+	AMainCharacter* mc = Cast<AMainCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+	if (IsValid(mc)) {
+		SoundMasterVolume->SetValue(mc->GetMasterVolume());
+		SoundMusicVolume->SetValue(mc->GetBGMVolume());
+		SoundSFXVolume->SetValue(mc->GetSFXVolume());
+	}
+}
+
 void UOptionMenu::ApplyGraphicSettings() {
 	UGameUserSettings* settings = UGameUserSettings::GetGameUserSettings();
 	settings->SetFullscreenMode(static_cast<EWindowMode::Type>(GraphicFullscreen->GetSelectedIndex()));
@@ -76,6 +87,15 @@ void UOptionMenu::CancelGraphicSettings() {
 	InitializeGraphicSettings();
 }
 
+void UOptionMenu::SaveSoundSettings() {
+	AMainCharacter* mc = Cast<AMainCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+	if (IsValid(mc)) {
+		mc->SetVolumes(SoundMasterVolume->GetValue(), SoundMusicVolume->GetValue(), SoundSFXVolume->GetValue());
+	}
+}
+
 void UOptionMenu::NativeConstruct() {
 	InitializeGraphicSettings();
+	InitializeSoundSettings();
+	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 0.f);
 }
