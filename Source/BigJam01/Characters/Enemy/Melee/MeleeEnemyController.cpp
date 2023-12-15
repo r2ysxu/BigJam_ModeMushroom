@@ -73,23 +73,38 @@ void AMeleeEnemyController::RoamTo(FVector Location) {
 
 void AMeleeEnemyController::Routine() {
 	switch (State) {
-	case EMeleeEnemyState::VE_Roaming:
-		break;
-	case EMeleeEnemyState::VE_Chasing:
-		if (Owner->GetIsAttacking() || Owner->GetIsSleeping()) {
-			StopMovement();
-		} else if (IsValid(Target) && !Owner->GetIsDashing() && !Owner->GetInAnimLock()) {
-			float distance = Owner->GetDistanceTo(Target);
-			float dashChance = FMath::SRand() + distance / SightRange;
-			if (!bDashCoolDown && dashChance > 0.75) {
-				MoveToActor(Target);
-				bDashCoolDown = true;
-				Owner->DashForward();
-				if (!bDashCoolDown) GetWorld()->GetTimerManager().SetTimer(DashCooldownHandler, this, &AMeleeEnemyController::OnDashCooldown, DashCooldownRate, false);
-			} else {
-				MoveToActor(Target);
+		case EMeleeEnemyState::VE_Roaming:
+			break;
+		case EMeleeEnemyState::VE_Chasing:
+			GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, TEXT("CHASE state"));
+			GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, Owner->GetIsMeleeRange() ? TEXT("IN MELEE") : TEXT("NOT IN MELEE"));
+			if (Owner->GetIsAttacking() || Owner->GetIsSleeping()) {
+				StopMovement();
 			}
-		}
-		break;
+			else if (Owner->HasOverlappingActors()) {
+				State = EMeleeEnemyState::VE_Attacking;
+			}
+			else if (IsValid(Target) && !Owner->GetIsDashing() && !Owner->GetInAnimLock()) {
+				float distance = Owner->GetDistanceTo(Target);
+				float dashChance = FMath::SRand() + distance / SightRange;
+				if (!bDashCoolDown && dashChance > 0.75) {
+					MoveToActor(Target);
+					bDashCoolDown = true;
+					Owner->DashForward();
+					if (!bDashCoolDown) GetWorld()->GetTimerManager().SetTimer(DashCooldownHandler, this, &AMeleeEnemyController::OnDashCooldown, DashCooldownRate, false);
+				} else {
+					MoveToActor(Target);
+				}
+			}
+			break;
+		case EMeleeEnemyState::VE_Attacking:
+			GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, TEXT("ATTACK state"));
+			MoveToActor(Target);
+			Owner->InitiateMeleeAttack();
+			if (!Owner->GetIsMeleeRange() || !Owner->HasOverlappingActors()) {
+				State = EMeleeEnemyState::VE_Chasing;
+			}
+			break;
 	}
+
 }

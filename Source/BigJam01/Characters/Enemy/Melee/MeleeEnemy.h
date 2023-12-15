@@ -44,6 +44,7 @@ private:
 	volatile bool bAttackSwing = false;
 	volatile bool bFlinching = false;
 	volatile bool bDashing = false;
+	volatile bool bMeleeRange = false;
 
 	void SingleAttack(EMeleeAttackType AttackType);
 	void ClearAttacks();
@@ -74,7 +75,6 @@ protected:
 	UFUNCTION() void OnOutsideMeleeRange(UPrimitiveComponent* OverlappedComponent, AActor* actor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex);
 	UFUNCTION() void OnWeaponMeleeHit(UPrimitiveComponent* OverlappedComponent, AActor* actor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	virtual void BeginPlay() override;
-	void InitiateMeleeAttack();
 	void PerformAttack();
 	void AttackChain();
 	void OnFlinchRecover();
@@ -87,8 +87,11 @@ public:
 	UFUNCTION(BlueprintCallable) bool GetIsAttacking() { return bAttacking; }
 	UFUNCTION(BlueprintCallable) void NextMoveLocation(FVector Path);
 	virtual float OnHitByOpponent(float Damage, EStatusDebuffType Status) override;
+	void InitiateMeleeAttack();
 	void DashForward();
 	void DashBack();
 	bool GetIsDashing();
 	void OnStartChasing();
+	bool GetIsMeleeRange();
+	bool HasOverlappingActors();
 };

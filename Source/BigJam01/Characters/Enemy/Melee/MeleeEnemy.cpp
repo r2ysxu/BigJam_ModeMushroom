@@ -111,12 +111,16 @@ void AMeleeEnemy::OnWithinMeleeRange(UPrimitiveComponent* OverlappedComponent, A
 	if (actor == this || bFlinching) return;
 	AMainCharacter* mc = Cast<AMainCharacter>(actor);
 	if (IsValid(mc)) {
+		GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, TEXT("ENTERING melee range"));
+		bMeleeRange = true;
 		InitiateMeleeAttack();
 	}
 }
 
 void AMeleeEnemy::OnOutsideMeleeRange(UPrimitiveComponent* OverlappedComponent, AActor* actor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex) {
 	if (actor == this) return;
+	GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, TEXT("EXITING melee range"));
+	bMeleeRange = false;
 	ClearAttacks();
 	GetWorld()->GetTimerManager().ClearTimer(InitiateAttackHandler);
 }
@@ -170,4 +174,14 @@ bool AMeleeEnemy::GetIsDashing() {
 void AMeleeEnemy::OnStartChasing() {
 	GetCharacterMovement()->MaxWalkSpeed = ChaseSpeed;
 	ShowHud();
+}
+
+bool AMeleeEnemy::GetIsMeleeRange() {
+	return bMeleeRange;
+}
+
+bool AMeleeEnemy::HasOverlappingActors() {
+	TArray<AActor*> result;
+	MeleeDetectionComponent->GetOverlappingActors(result, AMainCharacter::StaticClass());
+	return !result.IsEmpty();
 }
