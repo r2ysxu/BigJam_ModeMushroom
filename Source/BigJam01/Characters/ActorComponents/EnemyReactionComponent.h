@@ -23,4 +23,5 @@ public:
 	void Subscribe(class AMeleeEnemy* Enemy);
 	void NotifyDodge();
 	void Unsubscribe(class AMeleeEnemy* Enemy);
+	bool HasSubscribers();
 };

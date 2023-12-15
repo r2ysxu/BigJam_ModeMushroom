@@ -31,6 +31,7 @@ private:
 	FTimerHandle OnDodgeStopHandler;
 	FTimerHandle OnFlinchHandler;
 	FTimerHandle OnStaminaHandler;
+	FTimerHandle OnMusicHandler;
 
 	void SetupHUDs();
 	void InitiateAttack(EAttackType AttackType);
@@ -73,6 +74,13 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
 	class UAnimMontage* FlinchMontage;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound", meta = (AllowPrivateAccess = "true"))
+	USoundBase* BGMBattleSound;
+	class UAudioComponent* BGMBattleComponent;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound", meta = (AllowPrivateAccess = "true"))
+	USoundBase* BGMSereneSound;
+	class UAudioComponent* BGMSereneComponent;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HUD")
 	TSubclassOf<class UPlayerStatHUD> PlayerHudClass;
 	class UPlayerStatHUD* PlayerHud;
@@ -84,6 +92,7 @@ protected:
 	void OnDodgeRoll();
 	void OnDodgeRollStop();
 	void OnFlinchStop();
+	void OnCheckBGMusic();
 	
 	virtual void BeginPlay() override;
 	virtual void SetupWeapons() override;
