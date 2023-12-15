@@ -63,6 +63,7 @@ void AMeleeEnemy::BeginPlay() {
 }
 
 void AMeleeEnemy::InitiateMeleeAttack() {
+	GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, TEXT("Initiating melee attack"));
 	if (!bAttacking and !bInAnimLock) {
 		bAttacking = true;
 		PerformAttack();
@@ -70,11 +71,12 @@ void AMeleeEnemy::InitiateMeleeAttack() {
 }
 
 void AMeleeEnemy::PerformAttack() {
-	SelectedChain = FMath::RandRange(0, 0);
+	SelectedChain = FMath::RandRange(0, AttackChains.Num() - 1);
 	AttackChain();
 }
 
 void AMeleeEnemy::AttackChain() {
+	GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, TEXT("Attack chain setup"));
 	if (SelectedChain < AttackChains.Num()) {
 		bAttackSwing = false;
 		FAttackChain* AttackChain = &AttackChains[SelectedChain];
@@ -123,7 +125,7 @@ void AMeleeEnemy::OnWeaponMeleeHit(UPrimitiveComponent* OverlappedComponent, AAc
 	if (actor == this || !bAttacking || !bAttackSwing) return;
 	AMainCharacter* mc = Cast<AMainCharacter>(actor);
 	if (IsValid(mc)) {
-		mc->OnHitByOpponent(.1f, EStatusDebuffType::VE_NONE);
+		mc->OnHitByOpponent(DamagePerHit, EStatusDebuffType::VE_NONE);
 		GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Yellow, TEXT("Hit"));
 		bAttackSwing = false;
 	}

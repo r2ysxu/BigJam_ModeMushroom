@@ -82,6 +82,7 @@ void AMeleeEnemyController::Routine() {
 			float distance = Owner->GetDistanceTo(Target);
 			float dashChance = FMath::SRand() + distance / SightRange;
 			if (!bDashCoolDown && dashChance > 0.75) {
+				MoveToActor(Target);
 				bDashCoolDown = true;
 				Owner->DashForward();
 				if (!bDashCoolDown) GetWorld()->GetTimerManager().SetTimer(DashCooldownHandler, this, &AMeleeEnemyController::OnDashCooldown, DashCooldownRate, false);

@@ -67,6 +67,8 @@ protected:
 	float RecoveryDelay = 1.f;
 	UPROPERTY(EditAnywhere, BLueprintReadWrite, Category = "Attack")
 	float DodgeChance = 0.5f;
+	UPROPERTY(EditAnywhere, BLueprintReadWrite, Category = "Attack")
+	float DamagePerHit = 0.1f;
 
 	UFUNCTION() void OnWithinMeleeRange(UPrimitiveComponent* OverlappedComponent, AActor* actor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	UFUNCTION() void OnOutsideMeleeRange(UPrimitiveComponent* OverlappedComponent, AActor* actor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex);
