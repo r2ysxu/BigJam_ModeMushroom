@@ -8,14 +8,17 @@
 #include "../../Weapons/Melee/MeleeWeapon.h"
 #include "../../Widgets/HUDs/ComboHUD.h"
 #include "../../Widgets/HUDs/PlayerStatHUD.h"
+#include "../../BigJam01GameMode.h"
 
 #include "Engine/LocalPlayer.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/WidgetComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/AudioComponent.h"
+#include "GameFramework/Controller.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -75,6 +78,7 @@ void AMainCharacter::BeginPlay() {
 	SetupWeapons();
 	EquipWeapon(0);
 	GetWorld()->GetTimerManager().SetTimer(OnStaminaHandler, this, &AMainCharacter::OnStaminaRegen, 0.5f, true);
+	GetWorld()->GetTimerManager().SetTimer(OnHealthRegenHandler, this, &AMainCharacter::OnHealthRegen, 0.1f, true);
 	BGMSereneComponent = UGameplayStatics::CreateSound2D(GetWorld(), BGMSereneSound);
 	BGMBattleComponent = UGameplayStatics::CreateSound2D(GetWorld(), BGMBattleSound);
 	GetWorld()->GetTimerManager().SetTimer(OnMusicHandler, this, &AMainCharacter::OnCheckBGMusic, 0.5f, true);
@@ -111,6 +115,7 @@ void AMainCharacter::SetupHUDs() {
 	if (PlayerHud) {
 		PlayerHud->SetPlayer(this);
 		PlayerHud->AddToViewport();
+		PlayerHud->SetVisibility(ESlateVisibility::Hidden);
 	}
 }
 
@@ -131,6 +136,12 @@ void AMainCharacter::OnComboReset() {
 void AMainCharacter::OnStaminaRegen() {
 	if (!bAttacking && !GetIsDodging()) {
 		Stamina = FMath::Min(1.f, StaminaRegenRate + Stamina);
+	}
+}
+
+void AMainCharacter::OnHealthRegen() {
+	if (!EnemyReactionComponent->HasSubscribers()) {
+		Health = FMath::Min(1.f, Health + HealthRegen);
 	}
 }
 
@@ -187,6 +198,24 @@ void AMainCharacter::OnCheckBGMusic() {
 	}
 }
 
+bool AMainCharacter::CheckAlive() {
+	if (Health <= 0 && bAlive) {
+		bAlive = false;
+		GetMesh()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore);
+		GetMesh()->SetCollisionProfileName(FName("Ragdoll"));
+		GetMesh()->SetSimulatePhysics(true);
+		GetCharacterMovement()->StopMovementImmediately();
+		GetMovementComponent()->Deactivate();
+		DisableInput(Cast<APlayerController>(GetController()));
+		UUserWidget* gameoverWidget = CreateWidget<UUserWidget>(GetWorld(), GameOverWidgetClass);
+		if (IsValid(gameoverWidget)) {
+			gameoverWidget->AddToViewport();
+		}
+		GetWorld()->GetTimerManager().SetTimer(OnDeathHandler, this, &AMainCharacter::DeathRestart, 5.f, true);
+	}
+	return Super::CheckAlive();
+}
+
 void AMainCharacter::SetIsAttacking(bool IsAttacking) {
 	bAttacking = IsAttacking;
 }
@@ -200,8 +229,21 @@ float AMainCharacter::GetStamina() {
 	return Stamina;
 }
 
+void AMainCharacter::OnPlayerStart() {
+	if (IsValid(PlayerHud)) {
+		PlayerHud->SetVisibility(ESlateVisibility::Visible);
+	}
+}
+
 bool AMainCharacter::HasCharged() {
 	return ChargeComponent->OnChargedUp();
+}
+
+void AMainCharacter::DeathRestart() {
+	ABigJam01GameMode* gamemode = Cast<ABigJam01GameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	if (IsValid(gamemode)) {
+		gamemode->RestartGame();
+	}
 }
 
 bool AMainCharacter::DrainStamina(float Value) {
@@ -212,7 +254,7 @@ bool AMainCharacter::DrainStamina(float Value) {
 
 float AMainCharacter::OnHitByOpponent(float Damage, EStatusDebuffType Status) {
 	Health -= FMath::Min(Health, Damage);
-	if (FlinchMontage) {
+	if (CheckAlive() && FlinchMontage) {
 		GetMovementComponent()->StopActiveMovement();
 		float animationDelay = PlayAnimMontage(FlinchMontage);
 		GetWorld()->GetTimerManager().SetTimer(OnFlinchHandler, this, &AMainCharacter::OnFlinchStop, animationDelay, false);

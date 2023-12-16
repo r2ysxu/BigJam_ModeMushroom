@@ -32,6 +32,8 @@ private:
 	FTimerHandle OnFlinchHandler;
 	FTimerHandle OnStaminaHandler;
 	FTimerHandle OnMusicHandler;
+	FTimerHandle OnHealthRegenHandler;
+	FTimerHandle OnDeathHandler;
 
 	void SetupHUDs();
 	void InitiateAttack(EAttackType AttackType);
@@ -60,6 +62,8 @@ protected:
 	float StaminaRegenRate = .1f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
 	float DodgeStaminaDrain = 0.2f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
+	float HealthRegen = .05f;
 
 	float MasterVolume = 1.f;
 	float BGMVolume = 1.f;
@@ -88,6 +92,8 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HUD")
 	TSubclassOf<class UPlayerStatHUD> PlayerHudClass;
 	class UPlayerStatHUD* PlayerHud;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HUD")
+	TSubclassOf<class UUserWidget> GameOverWidgetClass;
 	
 	bool CanMove();
 	bool CanMoveAndAttack();
@@ -114,18 +120,22 @@ public:
 	void SetDodgeWindow(bool IsOpen);
 	virtual bool OnHitTarget(class ABaseCharacter* Target, float Damage, enum EStatusDebuffType Status) override;
 	virtual float OnHitByOpponent(float Damage, enum EStatusDebuffType Status) override;
+	virtual bool CheckAlive();
 	
 	void SetIsAttacking(bool IsAttacking);
 	class AMeleeWeapon* GetEquippedWeapon();
 	void OnNextCombo();
 	void OnComboReset();
 	void OnStaminaRegen();
+	void OnHealthRegen();
 	bool HasCharged();
+	void DeathRestart();
 	FORCEINLINE bool GetIsAttacking() { return bAttacking; }
 	FORCEINLINE virtual uint8 GetTeam() override { return 1; }
 	FORCEINLINE bool GetIsDodging() { return bRolling; }
 	FORCEINLINE bool GetIsCharging() { return bAttackRHeld; }
 	FORCEINLINE UFUNCTION(BlueprintCallable) float GetStamina();
+	UFUNCTION(BlueprintCallable) void OnPlayerStart();
 	UFUNCTION(BlueprintCallable) bool DrainStamina(float Value);
 	UFUNCTION(BlueprintCallable) class UComboComponent* GetComboComponent();
 	class UEnemyReactionComponent* GetEnemyReactionComponent();

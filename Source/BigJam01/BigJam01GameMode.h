@@ -12,6 +12,8 @@ class ABigJam01GameMode : public AGameModeBase {
 
 public:
 	ABigJam01GameMode();
+
+	void RestartGame();
 };
 
 
