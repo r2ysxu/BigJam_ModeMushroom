@@ -135,6 +135,7 @@ public:
 	FORCEINLINE bool GetIsDodging() { return bRolling; }
 	FORCEINLINE bool GetIsCharging() { return bAttackRHeld; }
 	FORCEINLINE UFUNCTION(BlueprintCallable) float GetStamina();
+	UFUNCTION(BlueprintCallable) void OnPlayerStart();
 	UFUNCTION(BlueprintCallable) bool DrainStamina(float Value);
 	UFUNCTION(BlueprintCallable) class UComboComponent* GetComboComponent();
 	class UEnemyReactionComponent* GetEnemyReactionComponent();

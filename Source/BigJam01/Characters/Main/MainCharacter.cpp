@@ -115,6 +115,7 @@ void AMainCharacter::SetupHUDs() {
 	if (PlayerHud) {
 		PlayerHud->SetPlayer(this);
 		PlayerHud->AddToViewport();
+		PlayerHud->SetVisibility(ESlateVisibility::Hidden);
 	}
 }
 
@@ -226,6 +227,12 @@ AMeleeWeapon* AMainCharacter::GetEquippedWeapon() {
 
 float AMainCharacter::GetStamina() {
 	return Stamina;
+}
+
+void AMainCharacter::OnPlayerStart() {
+	if (IsValid(PlayerHud)) {
+		PlayerHud->SetVisibility(ESlateVisibility::Visible);
+	}
 }
 
 bool AMainCharacter::HasCharged() {
