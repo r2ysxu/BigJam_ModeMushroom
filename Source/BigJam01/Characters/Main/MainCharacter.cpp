@@ -75,6 +75,7 @@ void AMainCharacter::BeginPlay() {
 	SetupWeapons();
 	EquipWeapon(0);
 	GetWorld()->GetTimerManager().SetTimer(OnStaminaHandler, this, &AMainCharacter::OnStaminaRegen, 0.5f, true);
+	GetWorld()->GetTimerManager().SetTimer(OnHealthRegenHandler, this, &AMainCharacter::OnHealthRegen, 0.1f, true);
 	BGMSereneComponent = UGameplayStatics::CreateSound2D(GetWorld(), BGMSereneSound);
 	BGMBattleComponent = UGameplayStatics::CreateSound2D(GetWorld(), BGMBattleSound);
 	GetWorld()->GetTimerManager().SetTimer(OnMusicHandler, this, &AMainCharacter::OnCheckBGMusic, 0.5f, true);
@@ -131,6 +132,12 @@ void AMainCharacter::OnComboReset() {
 void AMainCharacter::OnStaminaRegen() {
 	if (!bAttacking && !GetIsDodging()) {
 		Stamina = FMath::Min(1.f, StaminaRegenRate + Stamina);
+	}
+}
+
+void AMainCharacter::OnHealthRegen() {
+	if (!EnemyReactionComponent->HasSubscribers()) {
+		Health = FMath::Min(1.f, Health + HealthRegen);
 	}
 }
 

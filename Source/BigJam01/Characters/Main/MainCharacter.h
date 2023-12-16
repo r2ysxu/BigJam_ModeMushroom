@@ -32,6 +32,7 @@ private:
 	FTimerHandle OnFlinchHandler;
 	FTimerHandle OnStaminaHandler;
 	FTimerHandle OnMusicHandler;
+	FTimerHandle OnHealthRegenHandler;
 
 	void SetupHUDs();
 	void InitiateAttack(EAttackType AttackType);
@@ -60,6 +61,8 @@ protected:
 	float StaminaRegenRate = .1f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
 	float DodgeStaminaDrain = 0.2f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
+	float HealthRegen = .05f;
 
 	float MasterVolume = 1.f;
 	float BGMVolume = 1.f;
@@ -120,6 +123,7 @@ public:
 	void OnNextCombo();
 	void OnComboReset();
 	void OnStaminaRegen();
+	void OnHealthRegen();
 	bool HasCharged();
 	FORCEINLINE bool GetIsAttacking() { return bAttacking; }
 	FORCEINLINE virtual uint8 GetTeam() override { return 1; }
