@@ -25,12 +25,11 @@ AMeleeEnemy::AMeleeEnemy() {
 	MeleeDetectionComponent->SetSphereRadius(50.f);
 	MeleeDetectionComponent->AddLocalOffset(FVector(60.f, 0.f, 0.f));
 	MeleeDetectionComponent->SetupAttachment(GetRootComponent());
-	MeleeDetectionComponent->bHiddenInGame = false;
+	MeleeDetectionComponent->bHiddenInGame = true;
 
 	MeleeWeaponBox = CreateDefaultSubobject<UBoxComponent>(TEXT("MeleeWeaponBox"));
 	MeleeWeaponBox->SetBoxExtent(FVector(30.f, 30.f, 30.f));
 	MeleeWeaponBox->SetupAttachment(GetMesh(), WeaponSocket);
-	//MeleeWeaponBox->bHiddenInGame = false;
 
 }
 
@@ -68,7 +67,6 @@ void AMeleeEnemy::BeginPlay() {
 }
 
 void AMeleeEnemy::InitiateMeleeAttack() {
-	GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, TEXT("Initiating melee attack"));
 	if (!bAttacking and !bInAnimLock) {
 		bAttacking = true;
 		PerformAttack();
@@ -81,7 +79,6 @@ void AMeleeEnemy::PerformAttack() {
 }
 
 void AMeleeEnemy::AttackChain() {
-	GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, TEXT("Attack chain setup"));
 	if (SelectedChain < AttackChains.Num()) {
 		bAttackSwing = false;
 		FAttackChain* AttackChain = &AttackChains[SelectedChain];
@@ -116,7 +113,6 @@ void AMeleeEnemy::OnWithinMeleeRange(UPrimitiveComponent* OverlappedComponent, A
 	if (actor == this || bFlinching) return;
 	AMainCharacter* mc = Cast<AMainCharacter>(actor);
 	if (IsValid(mc)) {
-		GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, TEXT("ENTERING melee range"));
 		bMeleeRange = true;
 		InitiateMeleeAttack();
 	}
@@ -124,7 +120,6 @@ void AMeleeEnemy::OnWithinMeleeRange(UPrimitiveComponent* OverlappedComponent, A
 
 void AMeleeEnemy::OnOutsideMeleeRange(UPrimitiveComponent* OverlappedComponent, AActor* actor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex) {
 	if (actor == this) return;
-	GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, TEXT("EXITING melee range"));
 	bMeleeRange = false;
 	ClearAttacks();
 	GetWorld()->GetTimerManager().ClearTimer(InitiateAttackHandler);
@@ -135,7 +130,6 @@ void AMeleeEnemy::OnWeaponMeleeHit(UPrimitiveComponent* OverlappedComponent, AAc
 	AMainCharacter* mc = Cast<AMainCharacter>(actor);
 	if (IsValid(mc)) {
 		mc->OnHitByOpponent(DamagePerHit, EStatusDebuffType::VE_NONE);
-		GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Yellow, TEXT("Hit"));
 		bAttackSwing = false;
 	}
 }

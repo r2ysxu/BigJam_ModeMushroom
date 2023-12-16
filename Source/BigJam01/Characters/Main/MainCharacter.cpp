@@ -81,7 +81,8 @@ void AMainCharacter::BeginPlay() {
 	GetWorld()->GetTimerManager().SetTimer(OnHealthRegenHandler, this, &AMainCharacter::OnHealthRegen, 0.1f, true);
 	BGMSereneComponent = UGameplayStatics::CreateSound2D(GetWorld(), BGMSereneSound);
 	BGMBattleComponent = UGameplayStatics::CreateSound2D(GetWorld(), BGMBattleSound);
-	GetWorld()->GetTimerManager().SetTimer(OnMusicHandler, this, &AMainCharacter::OnCheckBGMusic, 0.5f, true);
+	BGMBattleComponent->Play();
+	//GetWorld()->GetTimerManager().SetTimer(OnMusicHandler, this, &AMainCharacter::OnCheckBGMusic, 0.5f, true);
 }
 
 void AMainCharacter::SetDodgeWindow(bool IsOpen) {
@@ -178,7 +179,6 @@ void AMainCharacter::OnDodgeRoll() {
 }
 
 void AMainCharacter::OnDodgeRollStop() {
-	GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, TEXT("Dodge Stop"));
 	GetWorld()->GetTimerManager().ClearTimer(OnDodgeHandler);
 	bRolling = false;
 	GetMovementComponent()->Velocity = FVector();
@@ -285,7 +285,6 @@ void AMainCharacter::AttackE() {
 void AMainCharacter::DodgeRoll() {
 	if (DodgeMontage && !bRolling && !GetMovementComponent()->IsFalling() && bRollWindowOpen && DrainStamina(DodgeStaminaDrain)) {
 		bRolling = true;
-		GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, TEXT("Dodging"));
 		float animationDelay = PlayAnimMontage(DodgeMontage);
 		GetWorld()->GetTimerManager().SetTimer(OnDodgeHandler, this, &AMainCharacter::OnDodgeRoll, 0.01f, true, 0);
 		GetWorld()->GetTimerManager().SetTimer(OnDodgeStopHandler, this, &AMainCharacter::OnDodgeRollStop, animationDelay, false);

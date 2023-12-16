@@ -76,8 +76,6 @@ void AMeleeEnemyController::Routine() {
 		case EMeleeEnemyState::VE_Roaming:
 			break;
 		case EMeleeEnemyState::VE_Chasing:
-			GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, TEXT("CHASE state"));
-			GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, Owner->GetIsMeleeRange() ? TEXT("IN MELEE") : TEXT("NOT IN MELEE"));
 			if (Owner->GetIsAttacking() || Owner->GetIsSleeping()) {
 				StopMovement();
 			}
@@ -98,7 +96,6 @@ void AMeleeEnemyController::Routine() {
 			}
 			break;
 		case EMeleeEnemyState::VE_Attacking:
-			GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, TEXT("ATTACK state"));
 			MoveToActor(Target);
 			Owner->InitiateMeleeAttack();
 			if (!Owner->GetIsMeleeRange() || !Owner->HasOverlappingActors()) {
