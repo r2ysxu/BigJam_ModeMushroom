@@ -10,10 +10,12 @@
 #include "../../Widgets/HUDs/PlayerStatHUD.h"
 
 #include "Engine/LocalPlayer.h"
+#include "Kismet/GameplayStatics.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "Blueprint/UserWidget.h"
+#include "Components/AudioComponent.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -61,12 +63,21 @@ UEnemyReactionComponent* AMainCharacter::GetEnemyReactionComponent() {
 	return EnemyReactionComponent;
 }
 
+void AMainCharacter::SetVolumes(float Master, float Music, float Sfx) {
+	MasterVolume = Master;
+	BGMVolume = Music;
+	SFXVolume = Sfx;
+}
+
 void AMainCharacter::BeginPlay() {
 	Super::BeginPlay();
 	SetupHUDs();
 	SetupWeapons();
 	EquipWeapon(0);
 	GetWorld()->GetTimerManager().SetTimer(OnStaminaHandler, this, &AMainCharacter::OnStaminaRegen, 0.5f, true);
+	BGMSereneComponent = UGameplayStatics::CreateSound2D(GetWorld(), BGMSereneSound);
+	BGMBattleComponent = UGameplayStatics::CreateSound2D(GetWorld(), BGMBattleSound);
+	GetWorld()->GetTimerManager().SetTimer(OnMusicHandler, this, &AMainCharacter::OnCheckBGMusic, 0.5f, true);
 }
 
 void AMainCharacter::SetDodgeWindow(bool IsOpen) {
@@ -164,6 +175,16 @@ void AMainCharacter::OnDodgeRollStop() {
 
 void AMainCharacter::OnFlinchStop() {
 	bFlinching = false;
+}
+
+void AMainCharacter::OnCheckBGMusic() {
+	if (EnemyReactionComponent->HasSubscribers()) {
+		BGMSereneComponent->Stop();
+		if (!BGMBattleComponent->IsPlaying()) BGMBattleComponent->Play();
+	} else if (!BGMSereneComponent->IsPlaying()) {
+		BGMBattleComponent->Stop();
+		BGMSereneComponent->Play();
+	}
 }
 
 void AMainCharacter::SetIsAttacking(bool IsAttacking) {

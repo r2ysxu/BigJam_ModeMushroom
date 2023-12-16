@@ -31,6 +31,7 @@ private:
 	FTimerHandle OnDodgeStopHandler;
 	FTimerHandle OnFlinchHandler;
 	FTimerHandle OnStaminaHandler;
+	FTimerHandle OnMusicHandler;
 
 	void SetupHUDs();
 	void InitiateAttack(EAttackType AttackType);
@@ -60,6 +61,10 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
 	float DodgeStaminaDrain = 0.2f;
 
+	float MasterVolume = 1.f;
+	float BGMVolume = 1.f;
+	float SFXVolume = 1.f;
+
 	UPROPERTY(EditAnywhere, BLueprintReadWrite, Category = "Weapons")
 	TArray<FSpawnMeleeWeapon> EquippableWeaponClasses;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapons")
@@ -73,6 +78,13 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
 	class UAnimMontage* FlinchMontage;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound", meta = (AllowPrivateAccess = "true"))
+	USoundBase* BGMBattleSound;
+	class UAudioComponent* BGMBattleComponent;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound", meta = (AllowPrivateAccess = "true"))
+	USoundBase* BGMSereneSound;
+	class UAudioComponent* BGMSereneComponent;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HUD")
 	TSubclassOf<class UPlayerStatHUD> PlayerHudClass;
 	class UPlayerStatHUD* PlayerHud;
@@ -84,6 +96,7 @@ protected:
 	void OnDodgeRoll();
 	void OnDodgeRollStop();
 	void OnFlinchStop();
+	void OnCheckBGMusic();
 	
 	virtual void BeginPlay() override;
 	virtual void SetupWeapons() override;
@@ -116,5 +129,10 @@ public:
 	UFUNCTION(BlueprintCallable) bool DrainStamina(float Value);
 	UFUNCTION(BlueprintCallable) class UComboComponent* GetComboComponent();
 	class UEnemyReactionComponent* GetEnemyReactionComponent();
+
+	FORCEINLINE float GetMasterVolume() { return MasterVolume; }
+	FORCEINLINE float GetBGMVolume() { return BGMVolume; }
+	FORCEINLINE float GetSFXVolume() { return SFXVolume; }
+	void SetVolumes(float Master, float Music, float Sfx);
 
 };

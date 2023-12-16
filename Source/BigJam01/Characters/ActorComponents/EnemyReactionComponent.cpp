@@ -27,3 +27,7 @@ void UEnemyReactionComponent::NotifyDodge() {
 void UEnemyReactionComponent::Unsubscribe(AMeleeEnemy* Enemy) {
 	SubscribedEnemies.Remove(Enemy);
 }
+
+bool UEnemyReactionComponent::HasSubscribers() {
+	return !SubscribedEnemies.IsEmpty();
+}

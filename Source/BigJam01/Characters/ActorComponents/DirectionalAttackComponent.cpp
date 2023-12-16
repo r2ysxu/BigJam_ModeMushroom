@@ -51,7 +51,7 @@ void UDirectionalAttackComponent::InitiateAttack(EAttackType AttackType) {
 				break;
 			case EAttackSwingDirection::VE_N:
 				OnAttackStop();
-			default: break;
+				break;
 		}
 	}
 	if (IsValid(montage)) {

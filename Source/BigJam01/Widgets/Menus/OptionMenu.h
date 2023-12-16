@@ -17,7 +17,7 @@ private:
 	FString ResolutionPointToString(FIntPoint& Resolution);
 	void InitializeGraphicSlider(class USlider* Slider);
 	void InitializeGraphicSettings();
-
+	void InitializeSoundSettings();
 	
 protected:
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
@@ -40,10 +40,18 @@ protected:
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	class UCheckBox* GraphicVsync;
 
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	class USlider* SoundMasterVolume;
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	class USlider* SoundMusicVolume;
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	class USlider* SoundSFXVolume;
+
 	virtual void NativeConstruct();
 
 public:
 
 	UFUNCTION(BlueprintCallable) void ApplyGraphicSettings();
 	UFUNCTION(BlueprintCallable) void CancelGraphicSettings();
+	UFUNCTION(BlueprintCallable) void SaveSoundSettings();
 };
