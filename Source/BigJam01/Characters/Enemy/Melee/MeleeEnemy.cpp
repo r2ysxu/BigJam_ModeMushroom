@@ -41,6 +41,11 @@ void AMeleeEnemy::SetAiController(AMeleeEnemyController* MEController) {
 bool AMeleeEnemy::CheckAlive() {
 	if (Health <= 0) {
 		ClearAttacks();
+		AiController->NotifyDead();
+		if (IsValid(EnemyHud)) {
+			EnemyHud->SetVisibility(ESlateVisibility::Hidden);
+			EnemyHud->RemoveFromParent();
+		}
 		GetMesh()->SetCollisionProfileName(FName("Ragdoll"));
 		GetMesh()->SetSimulatePhysics(true);
 		GetMovementComponent()->Deactivate();

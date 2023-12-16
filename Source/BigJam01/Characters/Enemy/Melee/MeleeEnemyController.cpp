@@ -108,3 +108,9 @@ void AMeleeEnemyController::Routine() {
 	}
 
 }
+
+void AMeleeEnemyController::NotifyDead() {
+	if (IsValid(Target)) {
+		Target->GetEnemyReactionComponent()->Unsubscribe(Owner);
+	}
+}

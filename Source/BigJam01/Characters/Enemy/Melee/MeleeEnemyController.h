@@ -47,4 +47,5 @@ public:
 
 	void RoamTo(FVector Location);
 	void Routine();
+	void NotifyDead();
 };
