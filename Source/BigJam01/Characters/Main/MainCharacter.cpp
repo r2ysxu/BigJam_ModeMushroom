@@ -190,11 +190,11 @@ void AMainCharacter::OnFlinchStop() {
 
 void AMainCharacter::OnCheckBGMusic() {
 	if (EnemyReactionComponent->HasSubscribers()) {
-		BGMSereneComponent->Stop();
-		if (!BGMBattleComponent->IsPlaying()) BGMBattleComponent->Play();
+		if (BGMSereneComponent) BGMSereneComponent->Stop();
+		if (BGMBattleComponent && !BGMBattleComponent->IsPlaying()) BGMBattleComponent->Play();
 	} else if (!BGMSereneComponent->IsPlaying()) {
-		BGMBattleComponent->Stop();
-		BGMSereneComponent->Play();
+		if (BGMBattleComponent) BGMBattleComponent->Stop();
+		if (BGMSereneComponent) BGMSereneComponent->Play();
 	}
 }
 
